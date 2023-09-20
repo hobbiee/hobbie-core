@@ -54,3 +54,24 @@ To run this project, you will need to add the following environment variables to
 
 `DATABASE_USERNAME`
 
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/hobbiee/hobbie-core.git
+```
+
+Go to the project directory
+
+```bash
+  cd hobbie-core
+```
+
+Create .env file and keys from section above with your local values
+
+```bash
+  DATABASE_URL=jdbc:postgresql://localhost:5432/hobbie
+  DATABASE_PASSWORD=admin
+  DATABASE_USERNAME=postgres
+```
