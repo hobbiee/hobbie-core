@@ -1,4 +1,4 @@
-package com.br.hobbie.modules.events.domain.entities;
+package com.br.hobbie.modules.player.domain.entities;
 
 import jakarta.persistence.*;
 
