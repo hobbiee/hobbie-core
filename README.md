@@ -7,38 +7,6 @@
 Welcome to Hobbie, your go-to app for discovering and participating in sports events that match your interests and location preferences. Whether you're an adrenaline junkie or simply looking to stay active, Hobbie connects you with like-minded individuals and exciting sporting opportunities.
 
 
-## API Reference
-
-#### Get all items
-
-```http
-  GET /v1/api/items
-```
-
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `api_key` | `string` | **Required**. Your API key |
-
-#### Get item
-
-```http
-  GET /v1/api/items/${id}
-```
-
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `id`      | `string` | **Required**. Id of item to fetch |
-
-#### add(num1, num2)
-
-Takes two numbers and returns the sum.
-
-
-## Tech Stack
-
-**Server:** Java, Spring Framework
-
-
 ## Documentation
 
 [Documentation](https://hobbie.notion.site/Hobbie-Docs-Modeling-956d9fcfdb224447ae0effa20c246203?pvs=4)
@@ -53,6 +21,7 @@ To run this project, you will need to add the following environment variables to
 `DATABASE_PASSWORD`
 
 `DATABASE_USERNAME`
+
 
 ## Run Locally
 
@@ -75,3 +44,36 @@ Create .env file and keys from section above with your local values
   DATABASE_PASSWORD=admin
   DATABASE_USERNAME=postgres
 ```
+
+
+## API Reference
+
+#### Get all items
+
+```http
+  GET /api/items
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `api_key` | `string` | **Required**. Your API key |
+
+#### Get item
+
+```http
+  GET /api/items/${id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `string` | **Required**. Id of item to fetch |
+
+#### add(num1, num2)
+
+Takes two numbers and returns the sum.
+
+
+## Tech Stack
+
+**Server:** Java, Spring Framework
+
