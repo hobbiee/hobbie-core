@@ -12,7 +12,7 @@ Welcome to Hobbie, your go-to app for discovering and participating in sports ev
 #### Get all items
 
 ```http
-  GET /api/items
+  GET /v1/api/items
 ```
 
 | Parameter | Type     | Description                |
@@ -22,7 +22,7 @@ Welcome to Hobbie, your go-to app for discovering and participating in sports ev
 #### Get item
 
 ```http
-  GET /api/items/${id}
+  GET /v1/api/items/${id}
 ```
 
 | Parameter | Type     | Description                       |
