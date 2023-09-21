@@ -45,7 +45,7 @@ public record CreatePlayerRequest(
                         .map(String::toUpperCase)
                         .toArray(String[]::new))
                 .map(Tag::new)
-                .forEach(tag -> tag.addPlayer(player));
+                .forEach(player::addInterest);
 
         return player;
     }
