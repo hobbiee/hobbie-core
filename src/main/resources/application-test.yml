@@ -1,0 +1,15 @@
+spring:
+  config:
+    import: file:.env.test[.properties]
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
