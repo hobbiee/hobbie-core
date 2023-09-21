@@ -22,7 +22,7 @@ public class Player {
     private BigDecimal matchLongitude;
     private LocalDate birthDate;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     private Set<Tag> interests = new LinkedHashSet<>();
 
     /**
@@ -32,14 +32,12 @@ public class Player {
     protected Player() {
     }
 
-    public Player(Long id, String name, String avatar, BigDecimal matchLatitude, BigDecimal matchLongitude, LocalDate birthDate, Set<Tag> interests) {
-        this.id = id;
+    public Player(String name, String avatar, BigDecimal matchLatitude, BigDecimal matchLongitude, LocalDate birthDate) {
         this.name = name;
         this.avatar = avatar;
         this.matchLatitude = matchLatitude;
         this.matchLongitude = matchLongitude;
         this.birthDate = birthDate;
-        this.interests = interests;
     }
 
     public void addInterest(Tag tag) {
