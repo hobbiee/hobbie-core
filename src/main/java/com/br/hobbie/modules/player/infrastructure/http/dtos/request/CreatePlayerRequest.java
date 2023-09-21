@@ -4,6 +4,7 @@ import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Objects;
 
-public record CreatePlayer(
+public record CreatePlayerRequest(
         @NotBlank(message = "Name is required")
         String name,
         String avatar,
@@ -23,6 +24,7 @@ public record CreatePlayer(
 
         @NotNull(message = "Birth date is required")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        @Past(message = "Birth date must be in the past")
         LocalDate birthDate,
 
         @NotNull(message = "Interests is required")
@@ -51,7 +53,7 @@ public record CreatePlayer(
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CreatePlayer that)) return false;
+        if (!(o instanceof CreatePlayerRequest that)) return false;
         return Objects.equals(name, that.name) && Objects.equals(avatar, that.avatar) && Objects.equals(latitude, that.latitude) && Objects.equals(longitude, that.longitude) && Objects.equals(birthDate, that.birthDate) && Arrays.equals(interests, that.interests);
     }
 
