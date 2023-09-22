@@ -41,9 +41,11 @@ public record CreatePlayerRequest(
                 birthDate
         );
 
-        Arrays.stream(Arrays.stream(interests)
-                        .map(String::toUpperCase)
-                        .toArray(String[]::new))
+        var interestsUppercase = Arrays.stream(interests)
+                .map(String::toUpperCase)
+                .toArray(String[]::new);
+
+        Arrays.stream(interestsUppercase)
                 .map(Tag::new)
                 .forEach(player::addInterest);
 
