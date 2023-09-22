@@ -5,6 +5,7 @@ import com.br.hobbie.modules.player.domain.entities.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -28,6 +29,7 @@ public record CreatePlayerRequest(
         LocalDate birthDate,
 
         @NotNull(message = "Interests is required")
+        @Size(min = 1, message = "Interests must have at least one item")
         String[] interests
 ) {
 
