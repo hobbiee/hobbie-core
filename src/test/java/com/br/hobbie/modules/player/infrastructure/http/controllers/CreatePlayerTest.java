@@ -64,4 +64,28 @@ class CreatePlayerTest {
     }
 
 
+    @Test
+    @DisplayName("Should not be able to create a player without interests")
+    void createPlayer_ReturnsError_WithoutInterests() throws Exception {
+        // GIVEN
+        Map<String, Object> params = Map.of(
+                "name", "John Doe",
+                "avatar", "https://www.google.com",
+                "latitude", 10,
+                "longitude", 10,
+                "birthDate", "1990-01-01",
+                "interests", new String[]{}
+        );
+
+        // WHEN
+        var result = mvc.post(URL, params);
+
+        // THEN
+        result.andExpect(mvc.status().isBadRequest());
+        result.andExpect(mvc.status().is(HttpStatus.BAD_REQUEST.value()));
+        MockMvcResultMatchers.jsonPath("$.errors").exists();
+        MockMvcResultMatchers.jsonPath("$.errors").isNotEmpty();
+    }
+
+
 }
