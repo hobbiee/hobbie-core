@@ -1,5 +1,7 @@
 package com.br.hobbie.modules.player.domain.entities;
 
+import com.br.hobbie.modules.event.domain.entities.Event;
+import com.br.hobbie.shared.core.errors.Either;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,10 +25,13 @@ class PlayerTest {
     static final Set<Tag> TAGS = Set.of(new Tag("tag1"), new Tag("tag2"));
 
     private Player player;
+    private Event event;
 
     @BeforeEach
     void setUp() {
         player = new Player("name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
+
+        event = new Event("name", "description", 10, DATE, START_TIME, END_TIME, LATITUDE, LONGITUDE, "thumbnail", TAGS, player);
     }
 
     @Test
@@ -91,25 +96,83 @@ class PlayerTest {
         Assertions.assertTrue(player.getInterests().contains(tag2));
     }
 
-
-    // the test passes, but the player should not be able to change other players references
-    // this is a proof of concept of if player can change other players references
-    // so maybe we should change the way we are doing the relationship between player and event
-    // maybe we should create a new entity called PlayerEvent and use it to make the relationship
-    // between player and event
-
-    /**
-     * The class PlayerEvent should have the following attributes:
-     * <p>
-     * private Set<Player> players;
-     * private Set<Event> events;
-     * </p>
-     * <p>
-     * the first attribute is a set of players, which means the players that are going to the event
-     * the second attribute is a set of events, which means the events that the player is going to participate
-     */
     @Test
-    @DisplayName("Proof of concept of if player can change other players references")
-    void pocOfIfPlayerCanChangeOtherPlayersReferences() {
+    @DisplayName("Should create an event and set it as admin event")
+    void createEvent_SetAdminEvent() {
+        // GIVEN - setUp
+
+        // WHEN
+        player.createEvent(event);
+
+        // THEN
+        Assertions.assertEquals(1, player.getParticipantEvents().size());
+        Assertions.assertTrue(player.getParticipantEvents().contains(event));
+    }
+
+    @Test
+    @DisplayName("Get admin event should return a copy object of the admin event to keep the original event immutable")
+    void getAdminEvent_ReturnCopy() {
+        // GIVEN - setUp
+
+        // WHEN
+        Event adminEvent = player.getAdminEvent();
+
+        // THEN
+        Assertions.assertNotEquals(event, adminEvent);
+        Assertions.assertEquals(event.getName(), adminEvent.getName());
+        Assertions.assertEquals(event.getDescription(), adminEvent.getDescription());
+    }
+
+    @Test
+    @DisplayName("Should close an event if it is active")
+    void closeEvent_WhenActive() {
+        // GIVEN - setUp
+
+        // WHEN
+        player.closeEvent();
+
+        // THEN
+        Assertions.assertFalse(event.isActive());
+    }
+
+    @Test
+    @DisplayName("Should do nothing if event is not active")
+    void closeEvent_WhenNotActive() {
+        // GIVEN - setUp
+        event.close();
+
+        // WHEN
+        player.closeEvent();
+
+        // THEN
+        Assertions.assertFalse(event.isActive());
+    }
+
+    @Test
+    @DisplayName("Should quit an event when player is not admin")
+    void quitEvent_WhenNotAdmin() {
+        // GIVEN
+        Player other = new Player("other name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
+        player.createEvent(event);
+        event.addParticipant(other);
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = other.quitEvent(event);
+
+        // THEN
+        Assertions.assertTrue(result.isRight());
+    }
+
+    @Test
+    @DisplayName("Should not quit an event when player is admin")
+    void quitEvent_ReturnsEitherErrorWhenAdmin() {
+        // GIVEN - setUp
+        player.createEvent(event);
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = player.quitEvent(event);
+
+        // THEN
+        Assertions.assertTrue(result.isLeft());
     }
 }
