@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -71,16 +72,12 @@ public class Event {
             if (either.isRight()) {
                 return Either.right(true);
             }
+
+            participants.remove(player);
+            return Either.left(either.getLeft());
         }
 
         return Either.left(new RuntimeException("Event is full"));
-    }
-
-    public void close() {
-        if (active) {
-            active = false;
-            participants.forEach(player -> player.quitEvent(this));
-        }
     }
 
     @Override
@@ -109,5 +106,17 @@ public class Event {
 
     public boolean capacityReached() {
         return participants.size() == capacity;
+    }
+
+    public List<Player> getParticipants() {
+        return List.copyOf(participants);
+    }
+
+    public void close(Player player) {
+        if (player.compareTo(admin) == 0) {
+            active = false;
+            participants.clear();
+            admin = null;
+        }
     }
 }

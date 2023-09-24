@@ -77,8 +77,16 @@ public class Player implements Comparable<Player> {
         return Either.left(new RuntimeException("Player already has an event"));
     }
 
-    public void closeEvent() {
-        adminEvent.close();
+    public Either<RuntimeException, Boolean> closeEvent() {
+        // if adminEvent is null, then there is no event to close
+        if (adminEvent == null) {
+            return Either.left(new RuntimeException("Player has no event to close"));
+        }
+
+        adminEvent.close(this);
+        participantEvents.remove(adminEvent);
+        adminEvent = null;
+        return Either.right(true);
     }
 
     public Either<RuntimeException, Boolean> quitEvent(Event event) {
