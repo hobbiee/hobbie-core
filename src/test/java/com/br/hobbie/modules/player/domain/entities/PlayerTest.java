@@ -22,6 +22,8 @@ class PlayerTest {
     static final BigDecimal LATITUDE = BigDecimal.ONE;
     static final BigDecimal LONGITUDE = BigDecimal.TEN;
 
+    static final int CAPACITY = 10;
+
     static final Set<Tag> TAGS = Set.of(new Tag("tag1"), new Tag("tag2"));
 
     private Player player;
@@ -31,7 +33,7 @@ class PlayerTest {
     void setUp() {
         player = new Player("name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
 
-        event = new Event("name", "description", 10, DATE, START_TIME, END_TIME, LATITUDE, LONGITUDE, "thumbnail", TAGS, player);
+        event = new Event("name", "description", CAPACITY, DATE, START_TIME, END_TIME, LATITUDE, LONGITUDE, "thumbnail", TAGS, player);
     }
 
     @Test

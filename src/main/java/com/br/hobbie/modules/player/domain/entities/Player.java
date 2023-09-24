@@ -86,6 +86,10 @@ public class Player implements Comparable<Player> {
             return Either.left(new RuntimeException("Admin cannot quit event"));
         }
 
+        if (!participantEvents.contains(event)) {
+            return Either.left(new RuntimeException("Player is not a participant of this event"));
+        }
+
         participantEvents.remove(event);
         return Either.right(true);
     }

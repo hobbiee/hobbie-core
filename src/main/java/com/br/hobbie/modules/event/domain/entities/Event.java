@@ -67,6 +67,7 @@ public class Event {
     public Either<RuntimeException, Void> addParticipant(Player player) {
         if (participants.size() < capacity) {
             participants.add(player);
+            player.joinEvent(this);
             return Either.right(null);
         }
 
