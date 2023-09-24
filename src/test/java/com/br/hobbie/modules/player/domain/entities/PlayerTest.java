@@ -131,23 +131,28 @@ class PlayerTest {
         // GIVEN - setUp
 
         // WHEN
-        player.closeEvent();
+        Either<RuntimeException, Boolean> result = player.closeEvent();
 
         // THEN
+        Assertions.assertTrue(result.isRight());
         Assertions.assertFalse(event.isActive());
+        Assertions.assertEquals(0, player.getParticipantEvents().size());
     }
 
     @Test
-    @DisplayName("Should do nothing if event is not active")
+    @DisplayName("Should not close event if user has no event")
     void closeEvent_WhenNotActive() {
-        // GIVEN - setUp
-        event.close();
+        // GIVEN
+        Player other = new Player("other name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
+
 
         // WHEN
-        player.closeEvent();
+        Either<RuntimeException, Boolean> result = other.closeEvent();
+
 
         // THEN
-        Assertions.assertFalse(event.isActive());
+        Assertions.assertTrue(result.isLeft());
+        Assertions.assertNull(other.getAdminEvent());
     }
 
     @Test
