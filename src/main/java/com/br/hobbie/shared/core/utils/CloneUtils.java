@@ -15,10 +15,16 @@ public class CloneUtils {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             e.printStackTrace();
+            throw new RuntimeException("Could not clone object");
         }
 
         // copy all fields from object to clone
         T finalClone = clone;
+
+        if (clone == null || object == null) {
+            return null;
+        }
+
         Arrays.stream(object.getClass()
                         .getDeclaredFields())
                 .forEach(field -> {
