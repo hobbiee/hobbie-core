@@ -3,6 +3,7 @@ package com.br.hobbie.modules.event.domain.entities;
 import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
 import com.br.hobbie.shared.core.errors.Either;
+import com.br.hobbie.shared.core.utils.CloneUtils;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -28,6 +29,7 @@ public class Event {
     private BigDecimal latitude;
     private BigDecimal longitude;
     private String thumbnail;
+    @Getter
     private boolean active = true;
 
 
@@ -74,7 +76,7 @@ public class Event {
     public void close() {
         if (active) {
             active = false;
-            participants.forEach(player -> player.removeEvent(this));
+            participants.forEach(player -> player.quitEvent(this));
         }
     }
 
@@ -96,5 +98,9 @@ public class Event {
                 ", admin=" + admin +
                 ", participants=" + participants +
                 '}';
+    }
+
+    public Player getAdmin() {
+        return CloneUtils.clone(Player.class, admin);
     }
 }
