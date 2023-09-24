@@ -143,4 +143,15 @@ public class Player implements Comparable<Player> {
     }
 
 
+    public Either<RuntimeException, Boolean> joinEvent(Event event) {
+        if (!event.isActive()) return Either.left(new RuntimeException("Event is not active"));
+
+        if (event.capacityReached()) return Either.left(new RuntimeException("Event is full"));
+
+        if (adminEvent != null && adminEvent.equals(event))
+            return Either.left(new RuntimeException("Player is already admin of this event"));
+
+        participantEvents.add(event);
+        return Either.right(true);
+    }
 }

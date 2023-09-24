@@ -177,4 +177,79 @@ class PlayerTest {
         // THEN
         Assertions.assertTrue(result.isLeft());
     }
+
+    @Test
+    @DisplayName("Should not quit an event when player is not a participant")
+    void quitEvent_ReturnsEitherErrorWhenNotParticipant() {
+        // GIVEN - setUp
+        Player other = new Player("other name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
+        player.createEvent(event);
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = other.quitEvent(event);
+
+        // THEN
+        Assertions.assertTrue(result.isLeft());
+    }
+
+    @Test
+    @DisplayName("Should be able to join an event if allow new participants, if is active and if is not admin")
+    void joinEvent_WhenSuccessFull() {
+        // GIVEN - setUp
+        Player other = new Player("other name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
+        player.createEvent(event);
+
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = other.joinEvent(event);
+
+        // THEN
+        Assertions.assertTrue(result.isRight());
+    }
+
+    @Test
+    @DisplayName("Should not be able to join an event if is not active")
+    void joinEvent_ReturnsEitherErrorWhenNotActive() {
+        // GIVEN - setUp
+        Player other = new Player("other name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
+        player.createEvent(event);
+        event.close();
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = other.joinEvent(event);
+
+        // THEN
+        Assertions.assertTrue(result.isLeft());
+    }
+
+    @Test
+    @DisplayName("Should not be able to join an event if is admin")
+    void joinEvent_ReturnsEitherErrorWhenAdmin() {
+        // GIVEN - setUp
+        player.createEvent(event);
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = player.joinEvent(event);
+
+        // THEN
+        Assertions.assertTrue(result.isLeft());
+    }
+
+    @Test
+    @DisplayName("Should not be able to join an event if event is full")
+    void joinEvent_ReturnsEitherErrorWhenEventIsFull() {
+        // GIVEN - setUp
+        Player other = new Player("other name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
+        player.createEvent(event);
+        for (int i = 0; i < CAPACITY; i++) {
+            Player player = new Player("name" + i, "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
+            event.addParticipant(player);
+        }
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = other.joinEvent(event);
+
+        // THEN
+        Assertions.assertTrue(result.isLeft());
+    }
 }

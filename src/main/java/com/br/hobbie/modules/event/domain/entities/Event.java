@@ -64,11 +64,13 @@ public class Event {
     }
 
 
-    public Either<RuntimeException, Void> addParticipant(Player player) {
+    public Either<RuntimeException, Boolean> addParticipant(Player player) {
         if (participants.size() < capacity) {
             participants.add(player);
-            player.joinEvent(this);
-            return Either.right(null);
+            var either = player.joinEvent(this);
+            if (either.isRight()) {
+                return Either.right(true);
+            }
         }
 
         return Either.left(new RuntimeException("Event is full"));
@@ -103,5 +105,9 @@ public class Event {
 
     public Player getAdmin() {
         return CloneUtils.clone(Player.class, admin);
+    }
+
+    public boolean capacityReached() {
+        return participants.size() == capacity;
     }
 }
