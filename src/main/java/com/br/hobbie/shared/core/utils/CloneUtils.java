@@ -11,7 +11,7 @@ public class CloneUtils {
         try {
             var constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
-            clone = clazz.cast(constructor.newInstance());
+            clone = constructor.newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             e.printStackTrace();
