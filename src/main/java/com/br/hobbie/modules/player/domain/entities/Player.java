@@ -1,6 +1,7 @@
 package com.br.hobbie.modules.player.domain.entities;
 
 import com.br.hobbie.modules.event.domain.entities.Event;
+import com.br.hobbie.shared.core.errors.DomainException;
 import com.br.hobbie.shared.core.errors.Either;
 import com.br.hobbie.shared.core.utils.CloneUtils;
 import jakarta.persistence.*;
@@ -67,20 +68,20 @@ public class Player implements Comparable<Player> {
         return Set.copyOf(interests);
     }
 
-    public Either<RuntimeException, Void> createEvent(Event event) {
+    public Either<DomainException, Void> createEvent(Event event) {
         if (adminEvent == null) {
             adminEvent = event;
             participantEvents.add(adminEvent);
             return Either.right(null);
         }
 
-        return Either.left(new RuntimeException("Player already has an event"));
+        return Either.left(new DomainException("Player already has an event"));
     }
 
-    public Either<RuntimeException, Boolean> closeEvent() {
+    public Either<DomainException, Boolean> closeEvent() {
         // if adminEvent is null, then there is no event to close
         if (adminEvent == null) {
-            return Either.left(new RuntimeException("Player has no event to close"));
+            return Either.left(new DomainException("Player has no event to close"));
         }
 
         adminEvent.close(this);
@@ -89,13 +90,13 @@ public class Player implements Comparable<Player> {
         return Either.right(true);
     }
 
-    public Either<RuntimeException, Boolean> quitEvent(Event event) {
+    public Either<DomainException, Boolean> quitEvent(Event event) {
         if (event.getAdmin().compareTo(this) == 0) {
-            return Either.left(new RuntimeException("Admin cannot quit event"));
+            return Either.left(new DomainException("Admin cannot quit event"));
         }
 
         if (!participantEvents.contains(event)) {
-            return Either.left(new RuntimeException("Player is not a participant of this event"));
+            return Either.left(new DomainException("Player is not a participant of this event"));
         }
 
         participantEvents.remove(event);
@@ -151,9 +152,9 @@ public class Player implements Comparable<Player> {
     }
 
 
-    public Either<RuntimeException, Boolean> joinEvent(Event event) {
+    public Either<DomainException, Boolean> joinEvent(Event event) {
         if (adminEvent != null && adminEvent.equals(event))
-            return Either.left(new RuntimeException("Player is already admin of this event"));
+            return Either.left(new DomainException("Player is already admin of this event"));
 
         participantEvents.add(event);
         return Either.right(true);

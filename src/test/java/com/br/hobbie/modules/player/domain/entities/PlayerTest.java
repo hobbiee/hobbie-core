@@ -1,6 +1,7 @@
 package com.br.hobbie.modules.player.domain.entities;
 
 import com.br.hobbie.modules.event.domain.entities.Event;
+import com.br.hobbie.shared.core.errors.DomainException;
 import com.br.hobbie.shared.core.errors.Either;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -131,7 +132,7 @@ class PlayerTest {
         // GIVEN - setUp
 
         // WHEN
-        Either<RuntimeException, Boolean> result = player.closeEvent();
+        Either<DomainException, Boolean> result = player.closeEvent();
 
         // THEN
         Assertions.assertTrue(result.isRight());
@@ -147,7 +148,7 @@ class PlayerTest {
 
 
         // WHEN
-        Either<RuntimeException, Boolean> result = other.closeEvent();
+        Either<DomainException, Boolean> result = other.closeEvent();
 
 
         // THEN
@@ -164,7 +165,7 @@ class PlayerTest {
         event.addParticipant(other);
 
         // WHEN
-        Either<RuntimeException, Boolean> result = other.quitEvent(event);
+        Either<DomainException, Boolean> result = other.quitEvent(event);
 
         // THEN
         Assertions.assertTrue(result.isRight());
@@ -177,7 +178,7 @@ class PlayerTest {
         player.createEvent(event);
 
         // WHEN
-        Either<RuntimeException, Boolean> result = player.quitEvent(event);
+        Either<DomainException, Boolean> result = player.quitEvent(event);
 
         // THEN
         Assertions.assertTrue(result.isLeft());
@@ -191,7 +192,7 @@ class PlayerTest {
         player.createEvent(event);
 
         // WHEN
-        Either<RuntimeException, Boolean> result = other.quitEvent(event);
+        Either<DomainException, Boolean> result = other.quitEvent(event);
 
         // THEN
         Assertions.assertTrue(result.isLeft());
@@ -206,7 +207,7 @@ class PlayerTest {
 
 
         // WHEN
-        Either<RuntimeException, Boolean> result = other.joinEvent(event);
+        Either<DomainException, Boolean> result = other.joinEvent(event);
 
         // THEN
         Assertions.assertTrue(result.isRight());
@@ -220,7 +221,7 @@ class PlayerTest {
         player.createEvent(event);
 
         // WHEN
-        Either<RuntimeException, Boolean> result = player.joinEvent(event);
+        Either<DomainException, Boolean> result = player.joinEvent(event);
 
         // THEN
         Assertions.assertTrue(result.isLeft());

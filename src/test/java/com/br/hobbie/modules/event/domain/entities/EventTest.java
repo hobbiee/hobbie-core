@@ -1,6 +1,7 @@
 package com.br.hobbie.modules.event.domain.entities;
 
 import com.br.hobbie.modules.player.domain.entities.Player;
+import com.br.hobbie.shared.core.errors.DomainException;
 import com.br.hobbie.shared.core.errors.Either;
 import com.br.hobbie.shared.factory.PlayerEventTestFactory;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +45,7 @@ class EventTest {
         }
 
         // WHEN
-        Either<RuntimeException, Boolean> result = event.addParticipant(player);
+        Either<DomainException, Boolean> result = event.addParticipant(player);
 
         // THEN
         Assertions.assertTrue(result.isLeft());
@@ -58,7 +59,7 @@ class EventTest {
         Player player = event.getAdmin();
 
         // WHEN
-        Either<RuntimeException, Boolean> result = event.addParticipant(player);
+        Either<DomainException, Boolean> result = event.addParticipant(player);
 
         // THEN
         Assertions.assertTrue(result.isLeft());

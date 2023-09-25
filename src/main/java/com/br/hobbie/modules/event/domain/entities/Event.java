@@ -2,6 +2,7 @@ package com.br.hobbie.modules.event.domain.entities;
 
 import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
+import com.br.hobbie.shared.core.errors.DomainException;
 import com.br.hobbie.shared.core.errors.Either;
 import com.br.hobbie.shared.core.utils.CloneUtils;
 import jakarta.persistence.*;
@@ -65,7 +66,7 @@ public class Event {
     }
 
 
-    public Either<RuntimeException, Boolean> addParticipant(Player player) {
+    public Either<DomainException, Boolean> addParticipant(Player player) {
         if (participants.size() < capacity) {
             participants.add(player);
             var either = player.joinEvent(this);
@@ -77,7 +78,7 @@ public class Event {
             return Either.left(either.getLeft());
         }
 
-        return Either.left(new RuntimeException("Event is full"));
+        return Either.left(new DomainException("Event is full"));
     }
 
     @Override
