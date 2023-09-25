@@ -35,4 +35,8 @@ public class PlayerEventTestFactory {
         Player player = createPlayer();
         return new Event("name", "description", CAPACITY, DATE, START_TIME, END_TIME, LATITUDE, LONGITUDE, "thumbnail", TAGS, player);
     }
+
+    public static Tag createTag() {
+        return new Tag("DIFFERENT TAG");
+    }
 }

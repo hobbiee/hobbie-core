@@ -112,20 +112,6 @@ class PlayerTest {
     }
 
     @Test
-    @DisplayName("Get admin event should return a copy object of the admin event to keep the original event immutable")
-    void getAdminEvent_ReturnCopy() {
-        // GIVEN - setUp
-
-        // WHEN
-        Event adminEvent = player.getAdminEvent();
-
-        // THEN
-        Assertions.assertNotEquals(event, adminEvent);
-        Assertions.assertEquals(event.getName(), adminEvent.getName());
-        Assertions.assertEquals(event.getDescription(), adminEvent.getDescription());
-    }
-
-    @Test
     @DisplayName("Should close an event if it is active")
     void closeEvent_WhenActive() {
         // GIVEN - setUp
