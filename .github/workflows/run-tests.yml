@@ -27,6 +27,11 @@ jobs:
           java-version: 17
           distribution: 'temurin'
           cache: maven
+          
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.8.2
 
       - name: Run Tests
         run: mvn clean install
