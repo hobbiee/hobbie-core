@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
 
 import java.util.Objects;
 
@@ -31,6 +32,7 @@ public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    @Getter
     private String name;
 
 
@@ -56,4 +58,5 @@ public class Tag {
     public int hashCode() {
         return Objects.hash(id, name);
     }
+
 }
