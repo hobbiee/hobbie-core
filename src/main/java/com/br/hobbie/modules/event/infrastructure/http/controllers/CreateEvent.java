@@ -5,15 +5,14 @@ import com.br.hobbie.modules.event.domain.repositories.EventRepository;
 import com.br.hobbie.modules.event.infrastructure.http.dtos.request.CreateEventRequest;
 import com.br.hobbie.modules.player.domain.repositories.PlayerRepository;
 import com.br.hobbie.shared.core.errors.Either;
-import com.br.hobbie.shared.core.validators.BeforeThan;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Future;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalTime;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("v1/api/events")
@@ -35,28 +34,5 @@ public class CreateEvent {
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
-    @GetMapping("/local-time")
-    public ResponseEntity<LocalTime> getLocalTime() {
-        return ResponseEntity.ok(LocalTime.now());
-    }
-
-    @PostMapping("/local-time")
-    public ResponseEntity<LocalTime> postLocalTime(@Valid @RequestBody LocalTimeRequest request) {
-        System.out.println(request.time());
-        return ResponseEntity.ok(request.time());
-    }
 }
 
-@BeforeThan(field = "otherTime", value = "time")
-record LocalTimeRequest(
-        @Future LocalTime time,
-
-        @Future
-        LocalTime otherTime,
-
-        String name
-
-) {
-
-}
