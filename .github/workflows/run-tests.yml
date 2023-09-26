@@ -27,12 +27,17 @@ jobs:
           java-version: 17
           distribution: 'temurin'
           cache: maven
-          
+
       - name: Set up Maven
         uses: stCarolas/setup-maven@v4.5
         with:
           maven-version: 3.8.2
 
-      - name: Run Tests
-        run: mvn clean install
+      - name: Setup Database Url
+        run: |
+          echo "DATABASE_URL=jdbc:postgresql://postgres:5432/postgres" >> .env
+          echo "DATABASE_USER=postgres" >> .env
+          echo "DATABASE_PASSWORD=postgres" >> .env
 
+      - name: Run Tests
+        run: mvn -B clean test
