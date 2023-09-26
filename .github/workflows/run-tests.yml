@@ -36,7 +36,7 @@ jobs:
       - name: Setup Database Url
         run: |
           echo "DATABASE_URL=jdbc:postgresql://postgres:5432/postgres" >> .env
-          echo "DATABASE_USER=postgres" >> .env
+          echo "DATABASE_USERNAME=postgres" >> .env
           echo "DATABASE_PASSWORD=postgres" >> .env
 
       - name: Run Tests
