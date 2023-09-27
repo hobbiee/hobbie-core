@@ -5,6 +5,7 @@ import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
 import com.br.hobbie.shared.core.errors.Either;
 import com.br.hobbie.shared.core.ports.DateTimeResolver;
+import com.br.hobbie.shared.core.validators.MaxDate;
 import com.br.hobbie.shared.core.validators.ValidDate;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -32,6 +33,7 @@ public class CreateEventRequest implements DateTimeResolver {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @NotNull
     @FutureOrPresent
+    @MaxDate(days = 7, message = "Date must be less than 7 days from now")
     private LocalDate date;
 
     @DateTimeFormat(pattern = "HH:mm")
