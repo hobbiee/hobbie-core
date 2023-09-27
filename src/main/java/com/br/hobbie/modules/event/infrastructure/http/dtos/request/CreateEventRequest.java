@@ -65,9 +65,10 @@ public class CreateEventRequest implements DateTimeResolver {
 
     public Either<RuntimeException, Event> toEntity(LongFunction<Optional<Player>> playerFinder) {
         var playerOptional = playerFinder.apply(adminId);
-        if (playerOptional.isEmpty()) {
-            return Either.left(new RuntimeException("Player not found"));
+        if (playerOptional.isEmpty() || playerOptional.get().getAdminEvent() != null) {
+            return Either.left(new RuntimeException("Invalid player"));
         }
+
         var categoriesUpperCase = Arrays
                 .stream(categories)
                 .map(String::toUpperCase)
