@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,5 +53,101 @@ class CreateEventTest {
                 .andExpect(mvc.status().isCreated());
         MockMvcResultMatchers.jsonPath("$.id").exists();
         MockMvcResultMatchers.jsonPath("$.name").value(request.get("name"));
+    }
+
+    @Test
+    @DisplayName("Should not create an event when does not have admin")
+    void shouldNotCreate_WhenDoesNotHaveAdmin() throws Exception {
+        // GIVEN
+        Map<String, Object> request = new HashMap<>(PlayerEventTestFactory.createEventRequest());
+
+        // WHEN
+        var response = mvc.post(URL, request);
+
+        // THEN
+        response
+                .andExpect(mvc.status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Should return Unprocessable Entity when admin id is invalid")
+    void shouldReturnUnprocessableEntity_WhenAdminIdIsInvalid() throws Exception {
+        // GIVEN
+        Map<String, Object> request = new HashMap<>(PlayerEventTestFactory.createEventRequest());
+        request.put("adminId", 10);
+
+        // WHEN
+        var response = mvc.post(URL, request);
+
+        // THEN
+        response
+                .andExpect(mvc.status().isUnprocessableEntity());
+        MockMvcResultMatchers.jsonPath("$.errors").isArray();
+    }
+
+    @Test
+    @DisplayName("Should return Unprocessable Entity when player already has an event")
+    void shouldReturnUnprocessableEntity_WhenPlayerAlreadyHasAnEvent() throws Exception {
+        // GIVEN
+        Map<String, Object> request = new HashMap<>(PlayerEventTestFactory.createEventRequest());
+        request.put("adminId", player.getId());
+        mvc.post(URL, request);
+
+        // WHEN
+        var response = mvc.post(URL, request);
+
+        // THEN
+        response
+                .andExpect(mvc.status().isUnprocessableEntity());
+        MockMvcResultMatchers.jsonPath("$.message").value("Player already has an event");
+    }
+
+    @Test
+    @DisplayName("Should not create an event on past date")
+    void shouldNotCreate_WhenPastDate() throws Exception {
+        // GIVEN
+        Map<String, Object> request = new HashMap<>(PlayerEventTestFactory.createEventRequest());
+        request.put("adminId", player.getId());
+        request.put("date", "2021-01-01");
+
+        // WHEN
+        var response = mvc.post(URL, request);
+
+        // THEN
+        response
+                .andExpect(mvc.status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Should not create an event when date is more than 7 days from now")
+    void shouldNotCreate_WhenDateIsMoreThan7DaysFromNow() throws Exception {
+        // GIVEN
+        Map<String, Object> request = new HashMap<>(PlayerEventTestFactory.createEventRequest());
+        request.put("adminId", player.getId());
+        request.put("date", LocalDate.now().plusDays(8).toString());
+
+        // WHEN
+        var response = mvc.post(URL, request);
+
+        // THEN
+        response
+                .andExpect(mvc.status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Should not create an event when start time is after end time")
+    void shouldNotCreate_WhenStartTimeIsAfterEndTime() throws Exception {
+        // GIVEN
+        Map<String, Object> request = new HashMap<>(PlayerEventTestFactory.createEventRequest());
+        request.put("adminId", player.getId());
+        request.put("startTime", "20:00");
+        request.put("endTime", "19:00");
+
+        // WHEN
+        var response = mvc.post(URL, request);
+
+        // THEN
+        response
+                .andExpect(mvc.status().isBadRequest());
     }
 }
