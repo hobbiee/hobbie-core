@@ -17,6 +17,7 @@ public class Player {
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     private final Set<Tag> interests = new LinkedHashSet<>();
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -111,4 +112,5 @@ public class Player {
         participantEvents.add(event);
         return Either.right(true);
     }
+
 }
