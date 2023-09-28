@@ -16,8 +16,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.LongFunction;
+import java.util.stream.Collectors;
 
 @Getter
 @ValidDate(fields = {"date", "startTime", "endTime"})
@@ -69,18 +69,15 @@ public class CreateEventRequest implements DateTimeResolver {
             return Either.left(new RuntimeException("Invalid player"));
         }
 
-        var categoriesUpperCase = Arrays
+        var tags = Arrays
                 .stream(categories)
                 .map(String::toUpperCase)
-                .toArray(String[]::new);
-
-        var tags = Arrays
-                .stream(categoriesUpperCase)
+                .map(String::trim)
                 .map(Tag::new)
-                .toArray(Tag[]::new);
+                .collect(Collectors.toSet());
 
 
-        var eventCreated = new Event(name, description, capacity, date, startTime, endTime, latitude, longitude, thumbnail, Set.of(tags), playerOptional.get());
+        var eventCreated = new Event(name, description, capacity, date, startTime, endTime, latitude, longitude, thumbnail, tags, playerOptional.get());
 
         return Either.right(eventCreated);
     }
