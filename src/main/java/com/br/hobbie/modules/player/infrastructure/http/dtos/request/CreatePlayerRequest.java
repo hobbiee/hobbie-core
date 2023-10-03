@@ -2,10 +2,8 @@ package com.br.hobbie.modules.player.infrastructure.http.dtos.request;
 
 import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import com.br.hobbie.shared.core.ports.ExistentTagsResolver;
+import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -34,7 +32,7 @@ public record CreatePlayerRequest(
 ) {
 
 
-    public Player toEntity() {
+    public Player toEntity(ExistentTagsResolver resolver) {
         var player = new Player(
                 name,
                 avatar,
@@ -43,13 +41,14 @@ public record CreatePlayerRequest(
                 birthDate
         );
 
-        var interestsUppercase = Arrays.stream(interests)
-                .map(String::toUpperCase)
-                .toArray(String[]::new);
-
-        Arrays.stream(interestsUppercase)
-                .map(Tag::new)
-                .forEach(player::addInterest);
+        resolver.resolve(
+                Arrays.stream(interests)
+                        .map(String::toUpperCase)
+                        .map(String::trim)
+                        .distinct()
+                        .map(Tag::new)
+                        .toArray(Tag[]::new)
+        ).forEach(player::addInterest);
 
         return player;
     }
