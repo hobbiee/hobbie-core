@@ -17,8 +17,12 @@ public record CreatePlayerRequest(
         String avatar,
 
         @NotNull(message = "Latitude is required")
+        @DecimalMin("-90.0")
+        @DecimalMax("90.0")
         Long latitude,
         @NotNull(message = "Longitude is required")
+        @DecimalMin("-180.0")
+        @DecimalMax("180.0")
         Long longitude,
 
         @NotNull(message = "Birth date is required")
