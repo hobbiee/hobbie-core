@@ -5,6 +5,7 @@ import com.br.hobbie.modules.event.domain.repositories.EventRepository;
 import com.br.hobbie.modules.event.infrastructure.http.dtos.request.CreateEventRequest;
 import com.br.hobbie.modules.player.domain.repositories.PlayerRepository;
 import com.br.hobbie.shared.core.errors.Either;
+import com.br.hobbie.shared.core.ports.ExistentTagsResolver;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,10 +22,11 @@ public class CreateEvent {
 
     private final EventRepository repository;
     private final PlayerRepository playerRepository;
+    private final ExistentTagsResolver resolveExistentTags;
 
     @PostMapping
     public ResponseEntity<Void> handle(@Valid @RequestBody CreateEventRequest request) {
-        Either<RuntimeException, Event> eventOrError = request.toEntity(playerRepository::findById);
+        Either<RuntimeException, Event> eventOrError = request.toEntity(playerRepository::findById, resolveExistentTags);
 
         if (eventOrError.isLeft()) {
             return ResponseEntity.unprocessableEntity().build();

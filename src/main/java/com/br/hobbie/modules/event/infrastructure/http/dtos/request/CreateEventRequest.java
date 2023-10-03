@@ -5,6 +5,7 @@ import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
 import com.br.hobbie.shared.core.errors.Either;
 import com.br.hobbie.shared.core.ports.DateTimeResolver;
+import com.br.hobbie.shared.core.ports.ExistentTagsResolver;
 import com.br.hobbie.shared.core.validators.MaxDate;
 import com.br.hobbie.shared.core.validators.ValidDate;
 import jakarta.validation.constraints.*;
@@ -17,7 +18,6 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.LongFunction;
-import java.util.stream.Collectors;
 
 @Getter
 @ValidDate(fields = {"date", "startTime", "endTime"})
@@ -53,6 +53,8 @@ public class CreateEventRequest implements DateTimeResolver {
     @DecimalMin("-180.0")
     @DecimalMax("180.0")
     private BigDecimal longitude;
+
+    
     private String thumbnail;
 
     @NotEmpty
@@ -63,24 +65,21 @@ public class CreateEventRequest implements DateTimeResolver {
     @Positive
     private Long adminId;
 
-    public Either<RuntimeException, Event> toEntity(LongFunction<Optional<Player>> playerFinder) {
+    public Either<RuntimeException, Event> toEntity(LongFunction<Optional<Player>> playerFinder, ExistentTagsResolver resolver) {
         var playerOptional = playerFinder.apply(adminId);
         if (playerOptional.isEmpty() || playerOptional.get().getAdminEvent() != null) {
             return Either.left(new RuntimeException("Invalid player"));
         }
 
-        var tags = Arrays
-                .stream(categories)
+        var tags = resolver.resolve(Arrays.stream(categories)
                 .map(String::toUpperCase)
                 .map(String::trim)
                 .map(Tag::new)
-                .collect(Collectors.toSet());
+                .toArray(Tag[]::new));
 
 
         var eventCreated = new Event(name, description, capacity, date, startTime, endTime, latitude, longitude, thumbnail, tags, playerOptional.get());
 
         return Either.right(eventCreated);
     }
-
-
 }
