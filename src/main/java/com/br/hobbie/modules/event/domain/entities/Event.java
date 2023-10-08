@@ -33,7 +33,7 @@ public class Event {
     private boolean active = true;
 
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     private Set<Tag> categories = new LinkedHashSet<>();
 
     @Getter
