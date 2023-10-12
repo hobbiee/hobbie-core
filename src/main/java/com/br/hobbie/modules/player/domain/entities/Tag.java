@@ -31,6 +31,7 @@ import java.util.Objects;
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Getter
     private Long id;
     @Getter
     private String name;
@@ -58,5 +59,4 @@ public class Tag {
     public int hashCode() {
         return Objects.hash(id, name);
     }
-
 }

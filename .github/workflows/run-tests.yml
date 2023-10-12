@@ -1,0 +1,43 @@
+name: Only run tests on pull requests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-all-tests:
+    runs-on: ubuntu-latest
+    container: openjdk:17-jdk
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.8.2
+
+      - name: Setup Database Url
+        run: |
+          echo "DATABASE_URL=jdbc:postgresql://postgres:5432/postgres" >> .env
+          echo "DATABASE_USERNAME=postgres" >> .env
+          echo "DATABASE_PASSWORD=postgres" >> .env
+
+      - name: Run Tests
+        run: mvn -B clean test

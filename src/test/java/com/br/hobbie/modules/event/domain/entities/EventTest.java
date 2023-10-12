@@ -5,7 +5,7 @@ import com.br.hobbie.shared.core.errors.DomainException;
 import com.br.hobbie.shared.core.errors.Either;
 import com.br.hobbie.shared.factory.PlayerEventTestFactory;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,11 +13,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class EventTest {
-    static Event event;
+    private Event event;
+    private Player player;
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUp() {
         event = PlayerEventTestFactory.createEvent();
+        player = PlayerEventTestFactory.createPlayer();
     }
 
     @Test
@@ -68,11 +70,33 @@ class EventTest {
     }
 
     @Test
-    void close() {
+    @DisplayName("Should remove participant if player is admin")
+    void closeEvent_WhenPlayerIsAdmin() {
+        // GIVEN
+        Player player = event.getAdmin();
+
+        // WHEN
+        event.close(player);
+
+        // THEN
+        Assertions.assertFalse(event.isActive());
+        Assertions.assertEquals(0, event.getParticipants().size());
+        Assertions.assertNull(event.getAdmin());
     }
 
     @Test
-    void getAdmin() {
+    @DisplayName("Should do nothing if player is not admin")
+    void closeEvent_WhenPlayerIsNotAdmin() {
+        // GIVEN
+        Player player = PlayerEventTestFactory.createParticipant();
+
+        // WHEN
+        event.close(player);
+
+        // THEN
+        Assertions.assertTrue(event.isActive());
+        Assertions.assertEquals(1, event.getParticipants().size());
+        Assertions.assertNotNull(event.getAdmin());
     }
 
     @Test
@@ -104,9 +128,5 @@ class EventTest {
 
         // THEN
         Assertions.assertFalse(result);
-    }
-
-    @Test
-    void getName() {
     }
 }

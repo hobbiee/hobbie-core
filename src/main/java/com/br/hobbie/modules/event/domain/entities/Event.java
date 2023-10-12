@@ -4,14 +4,13 @@ import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
 import com.br.hobbie.shared.core.errors.DomainException;
 import com.br.hobbie.shared.core.errors.Either;
-import com.br.hobbie.shared.core.utils.CloneUtils;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,14 +34,15 @@ public class Event {
     private boolean active = true;
 
 
-    @ManyToMany
-    private Set<Tag> categories = new HashSet<>();
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    private Set<Tag> categories = new LinkedHashSet<>();
 
+    @Getter
     @OneToOne
     private Player admin;
 
     @OneToMany
-    private Set<Player> participants = new HashSet<>();
+    private Set<Player> participants = new LinkedHashSet<>();
 
 
     @Deprecated(since = "JPA only")
@@ -74,35 +74,10 @@ public class Event {
                 return Either.right(true);
             }
 
-            participants.remove(player);
             return Either.left(either.getLeft());
         }
 
         return Either.left(new DomainException("Event is full"));
-    }
-
-    @Override
-    public String toString() {
-        return "Event{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", capacity=" + capacity +
-                ", date=" + date +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", thumbnail='" + thumbnail + '\'' +
-                ", active=" + active +
-                ", categories=" + categories +
-                ", admin=" + admin +
-                ", participants=" + participants +
-                '}';
-    }
-
-    public Player getAdmin() {
-        return CloneUtils.clone(Player.class, admin);
     }
 
     public boolean capacityReached() {
@@ -114,7 +89,7 @@ public class Event {
     }
 
     public void close(Player player) {
-        if (player.compareTo(admin) == 0) {
+        if (player.equals(admin)) {
             active = false;
             participants.clear();
             admin = null;
