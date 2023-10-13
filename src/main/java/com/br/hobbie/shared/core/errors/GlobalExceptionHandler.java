@@ -81,14 +81,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(ObjectNotFoundException.class)
+    @ExceptionHandler(DomainException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Object> handleObjectNotFoundException(
-            ObjectNotFoundException objectNotFoundException,
+    public ResponseEntity<Object> handleDomainException(
+            DomainException domainException,
             WebRequest request) {
-        log.error("Failed to find the requested element", objectNotFoundException);
+        log.error("Failed to find the requested element", domainException);
         return buildErrorResponse(
-                objectNotFoundException,
+                domainException,
                 HttpStatus.NOT_FOUND,
                 request);
     }
