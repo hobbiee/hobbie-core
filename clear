@@ -1,0 +1,77 @@
+[33md612f3b[m[33m ([m[1;36mHEAD -> [m[1;32mfeature/custom-exceptions[m[33m, [m[1;31morigin/feature/custom-exceptions[m[33m)[m merge development into feature/custom-exceptions
+[33m8f175ba[m[33m ([m[1;31morigin/development[m[33m, [m[1;32mdevelopment[m[33m)[m Merge pull request #18 from hobbiee/feature/create-events
+[33m44b7068[m Merge branch 'development' into feature/create-events
+[33mb9f8e18[m chore: changes the env files configuration
+[33m9ae6878[m feat: add tests for the use case `ResolveExistentTags`
+[33mdc3b171[m feat: invoke a `MockMvc` bean globally
+[33mbce061f[m feat: add validation for latitude and longitude
+[33mbf94ad9[m feat: adds the same tag's validation to the players endpoint
+[33me82abd3[m feat: adds the interface to handle tag's management
+[33me99a0f1[m[33m ([m[1;31morigin/feature/create-events[m[33m)[m refactor: cleans de tag parse
+[33m799522d[m test(`CreateEvent`): implement all end-to-end test cases
+[33mc8dcb2d[m feat: validates if the event admin candidate already has an event
+[33mbea39d1[m feat: custom validator max date interval for create event
+[33m5015059[m feat(`player`): getter for id
+[33m61506e7[m test:(`CreateEvent`): new factory method to build a request object
+[33mafcc34c[m test:(`CreateEvent`): first good case end-to-end test
+[33m850c4db[m test(`ValidDateValidator`): utilities for test, factory method and contract fake implementation
+[33ma6733f2[m test(`ValidDateValidator`): tests all verifications cases
+[33m633f01a[m refactor: split the validator variables to better understanding
+[33m6910300[m feat: unit tests for custom `ValidDateValidator`
+[33m0ff9925[m feat: implement the custom validators to create event request dto
+[33m5e2d129[m refactor: cleans the controller tests and sets to cascade mode persist on event-tag relationship
+[33mf58eeb9[m feat(`create-event`): add dto request for create an event and custom validators
+[33mb36dd26[m refactor: removes dotenv config for application-test.yml
+[33m56c52de[m feat(`event`): adds jpa and dto's
+[33meda9e9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Update run-tests.yml
+[33mb9b1b59[m Update run-tests.yml
+[33ma9e5b18[m ci: set up the maven for worflow
+[33mfb0a23a[m ci: update run-test workflow
+[33m14ffd8c[m Merge pull request #16 from hobbiee/main
+[33m41b10d0[m Merge branch 'development' into main
+[33m799ea3f[m Merge pull request #15 from hobbiee/refactor/deep-cloning
+[33mf0fe68c[m refactor: give out of the idea of `deep clone` references
+[33m046b09b[m Update run-tests.yml
+[33m862f42e[m Merge pull request #14 from hobbiee/ci/action-run-tests
+[33m106edf4[m ci: adds file `run-tests.yml` which set up tests workflow
+[33md53b109[m implementing custom exception DomainException
+[33m61a2e39[m refactor(`player-test`): changes tests to close event according to method declaration changes
+[33mf165490[m refactor: handles catch clause and null references
+[33m4b496f4[m refactor: removes redundant validation
+[33m65fa187[m refactor: the close method makes more sense now.
+[33ma33e205[m feat: adds first test class for `event` and auxiliar factory for tests
+[33m15f866b[m FEATURE: `Event` entity first implementation (#11)
+[33m4a414fe[m[33m ([m[1;32mmain[m[33m)[m Update feature-request.yml (#10)
+[33mc691eda[m Merge pull request #8 from hobbiee/development
+[33mf2e0134[m fix: fixes the `interests` input validation
+[33m1fad27f[m test(`create-player`): tests the edge case of create player without interests
+[33m9189035[m refactor: split the stream lines for better visibility and understanding
+[33m3480976[m test(`create-player`): test case for validations error when create a player.
+[33m8520498[m test(`create-player`): first test case implementation
+[33mf426c10[m chore(`pom`): test dependency update
+[33mbf47340[m refactor: makes more sense to player register an interest instead the tag adds player
+[33m32e10b7[m test: `CreatePlayer` test file
+[33mdeff203[m chore: configure tests profile
+[33m2eea3d1[m feat: exposes http endpoint to create a new player in the application
+[33mb810335[m feat: implement methods to manipulate the interests on domain classes
+[33m145cac1[m feat: tries to manage players interests with `tag` based value object.
+[33mf91fa6c[m refactor: change context name to `player` instead `event`
+[33m6a44d21[m feat: first entity classes and `Either` implementation
+[33m7c05406[m chore: Update pull request template
+[33mce1a0ac[m Create PULL_REQUEST_TEMPLATE.md
+[33m0dd5702[m Update README.md
+[33m9878d0c[m Update README.md
+[33m6805834[m Update README.md
+[33m376c9db[m Update feature-request.yml
+[33m1f4a3c5[m Update feature-request.yml
+[33mfe3334c[m Update README.md
+[33m47c129e[m Merge pull request #3 from hobbiee/development
+[33m93e2b99[m chore: remove label.yml action
+[33mfdd6c97[m Merge pull request #2 from hobbiee/development
+[33m981823e[m docs: add swagger
+[33m5eda5b8[m Create label.yml
+[33mff44bc2[m Create stale.yml
+[33m28dff5d[m Merge pull request #1 from hobbiee/development
+[33m31ac9dd[m chore: issue templates
+[33md9ed599[m Create README.md
+[33m45627cc[m initial commit
