@@ -5,6 +5,7 @@ import com.br.hobbie.modules.player.domain.entities.Tag;
 import com.br.hobbie.shared.core.errors.Either;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ public class Event {
     private Set<Tag> categories = new LinkedHashSet<>();
 
     @Getter
-    @OneToOne
+    @ManyToOne
     private Player admin;
 
     @ManyToMany
@@ -66,21 +67,14 @@ public class Event {
 
 
     public Either<RuntimeException, Boolean> addParticipant(Player player) {
-        if (!admin.equals(player) && participants.contains(player)) {
-            return Either.left(new RuntimeException("Player already joined"));
+        Assert.state(!admin.equals(player), "You cannot add yourself as a participant");
+
+        if (capacityReached()) {
+            return Either.left(new RuntimeException("Event is full"));
         }
 
-        if (participants.size() < capacity) {
-            participants.add(player);
-            var either = player.joinEvent(this);
-            if (either.isRight()) {
-                return Either.right(true);
-            }
-
-            return Either.left(either.getLeft());
-        }
-
-        return Either.left(new RuntimeException("Event is full"));
+        participants.add(player);
+        return Either.right(true);
     }
 
     public boolean capacityReached() {
@@ -91,24 +85,12 @@ public class Event {
         return List.copyOf(participants);
     }
 
-    public void close(Player player) {
-        if (player.equals(admin)) {
-            active = false;
-            participants.clear();
-            admin = null;
-        }
-    }
-
     public boolean isOwner(Player player) {
         return admin.isSameOf(player);
     }
 
-    public boolean alreadyParticipating(Player player) {
-        return participants.contains(player);
-    }
-
-    public boolean isFull() {
-        return participants.size() == capacity;
+    public boolean notParticipant(Player player) {
+        return !participants.contains(player);
     }
 
     public boolean requestAlreadySent(Player player) {

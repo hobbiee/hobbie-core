@@ -1,15 +1,15 @@
 package com.br.hobbie.modules.player.domain.entities;
 
 import com.br.hobbie.modules.event.domain.entities.Event;
-import com.br.hobbie.shared.core.errors.Either;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -29,14 +29,14 @@ public class Player {
     private LocalDate birthDate;
 
     @Getter
-    @OneToOne(mappedBy = "admin")
-    private Event adminEvent;
+    @OneToMany(mappedBy = "admin")
+    private Set<Event> adminEvents = new LinkedHashSet<>();
 
     @ManyToMany(mappedBy = "participants")
     private Set<Event> participantEvents = new LinkedHashSet<>();
 
     /**
-     * @deprecated (since = " JPA ") Constructor for JPA use only.
+     * @deprecated (since = " JPA ") Constructor for JPA uses only.
      */
     @Deprecated(since = "JPA")
     protected Player() {
@@ -54,49 +54,14 @@ public class Player {
         interests.add(tag);
     }
 
-    public void addInterests(Tag... tags) {
-        Arrays.stream(tags)
-                .filter(tag -> !interests.contains(tag))
-                .forEach(interests::add);
-    }
-
     public Set<Tag> getInterests() {
         return Set.copyOf(interests);
     }
 
-    public Either<RuntimeException, Void> createEvent(Event event) {
-        if (adminEvent == null) {
-            adminEvent = event;
-            participantEvents.add(adminEvent);
-            return Either.right(null);
-        }
-
-        return Either.left(new RuntimeException("Player already has an event"));
-    }
-
-    public Either<RuntimeException, Boolean> closeEvent() {
-        // if adminEvent is null, then there is no event to close
-        if (adminEvent == null) {
-            return Either.left(new RuntimeException("Player has no event to close"));
-        }
-
-        adminEvent.close(this);
-        participantEvents.remove(adminEvent);
-        adminEvent = null;
-        return Either.right(true);
-    }
-
-    public Either<RuntimeException, Boolean> quitEvent(Event event) {
-        if (adminEvent != null && adminEvent.equals(event)) {
-            return Either.left(new RuntimeException("Admin cannot quit event"));
-        }
-
-        if (!participantEvents.contains(event)) {
-            return Either.left(new RuntimeException("Player is not a participant of this event"));
-        }
-
-        participantEvents.remove(event);
-        return Either.right(true);
+    public void createEvent(Event event) {
+        Assert.isTrue(event.isOwner(this), "Player must be the admin of the event");
+        adminEvents.add(event);
+        participantEvents.add(event);
     }
 
     public List<Event> getParticipantEvents() {
@@ -105,15 +70,13 @@ public class Player {
     }
 
 
-    public Either<RuntimeException, Boolean> joinEvent(Event event) {
-        if (adminEvent != null && adminEvent.equals(event))
-            return Either.left(new RuntimeException("Player is already admin of this event"));
-
-        participantEvents.add(event);
-        return Either.right(true);
+    public void joinEvent(Event event) {
+        Assert.isTrue(event.isActive(), "Event must be active");
+        Assert.isTrue(!event.capacityReached(), "Event must have capacity");
+        event.addParticipant(this);
     }
 
     public boolean isSameOf(Player player) {
-        return id.equals(player.id);
+        return Objects.equals(id, player.id);
     }
 }

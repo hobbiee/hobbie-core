@@ -32,8 +32,8 @@ public class ParticipationRequest {
 
     public ParticipationRequest(Player player, Event event) {
         Assert.state(!event.isOwner(player), "Player cannot request participation in his own event");
-        Assert.state(!event.alreadyParticipating(player), "Player is already participating in this event");
-        Assert.state(!event.isFull(), "Event is already full");
+        Assert.isTrue(event.notParticipant(player), "Player is already participating in this event");
+        Assert.state(!event.capacityReached(), "Event is already full");
         Assert.state(!event.requestAlreadySent(player), "Player already sent a request to this event");
         this.player = player;
         this.event = event;
@@ -61,8 +61,8 @@ public class ParticipationRequest {
      */
     public ParticipationRequest(Player player, Event event, RequestStatus status, Instant requestTime) {
         Assert.state(!event.isOwner(player), "Player cannot request participation in his own event");
-        Assert.state(!event.alreadyParticipating(player), "Player is already participating in this event");
-        Assert.state(!event.isFull(), "Event is already full");
+        Assert.isTrue(event.notParticipant(player), "Player is already participating in this event");
+        Assert.state(!event.capacityReached(), "Event is already full");
         Assert.state(event.requestAlreadySent(player), "Player already sent a request to this event");
         this.player = player;
         this.event = event;

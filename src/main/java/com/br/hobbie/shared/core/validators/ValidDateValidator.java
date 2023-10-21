@@ -28,17 +28,17 @@ public class ValidDateValidator implements ConstraintValidator<ValidDate, DateTi
 
         var elevenPm = LocalTime.of(23, 0, 0);
 
-        if (today.equals(object.getDate())) {
-            return (object.getStartTime().isAfter(hoursNow)
-                    && object.getEndTime().isAfter(object.getStartTime())) && object.getStartTime().isBefore(elevenPm);
+        if (today.equals(object.date())) {
+            return (object.startTime().isAfter(hoursNow)
+                    && object.endTime().isAfter(object.startTime())) && object.startTime().isBefore(elevenPm);
         }
 
         // if date is in the future, both end date and start date can be after now
         // but the end date still cannot be before the start date
         return object
-                .getEndTime()
-                .isAfter(object.getStartTime()) &&
-                object.getStartTime().isBefore(elevenPm);
+                .endTime()
+                .isAfter(object.startTime()) &&
+                object.startTime().isBefore(elevenPm);
     }
 }
 

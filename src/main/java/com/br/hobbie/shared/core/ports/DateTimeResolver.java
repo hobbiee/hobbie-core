@@ -6,9 +6,9 @@ import java.time.LocalTime;
 public interface DateTimeResolver {
 
 
-    LocalTime getStartTime();
+    LocalTime startTime();
 
-    LocalTime getEndTime();
+    LocalTime endTime();
 
-    LocalDate getDate();
+    LocalDate date();
 }

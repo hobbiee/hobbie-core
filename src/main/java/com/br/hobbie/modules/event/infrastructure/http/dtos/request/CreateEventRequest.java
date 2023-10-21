@@ -67,7 +67,8 @@ public class CreateEventRequest implements DateTimeResolver {
 
     public Either<RuntimeException, Event> toEntity(LongFunction<Optional<Player>> playerFinder, ExistentTagsResolver resolver) {
         var playerOptional = playerFinder.apply(adminId);
-        if (playerOptional.isEmpty() || playerOptional.get().getAdminEvent() != null) {
+
+        if (playerOptional.isEmpty()) {
             return Either.left(new RuntimeException("Invalid player"));
         }
 
@@ -81,5 +82,20 @@ public class CreateEventRequest implements DateTimeResolver {
         var eventCreated = new Event(name, description, capacity, date, startTime, endTime, latitude, longitude, thumbnail, tags, playerOptional.get());
 
         return Either.right(eventCreated);
+    }
+
+    @Override
+    public LocalTime startTime() {
+        return startTime;
+    }
+
+    @Override
+    public LocalTime endTime() {
+        return endTime;
+    }
+
+    @Override
+    public LocalDate date() {
+        return date;
     }
 }
