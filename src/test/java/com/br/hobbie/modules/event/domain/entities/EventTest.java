@@ -13,12 +13,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class EventTest {
     private Event event;
-    private Player player;
 
     @BeforeEach
     void setUp() {
         event = PlayerEventTestFactory.createEvent();
-        player = PlayerEventTestFactory.createPlayer();
     }
 
     @Test

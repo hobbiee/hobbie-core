@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,7 +93,7 @@ class CreateEventTest {
         // GIVEN
         Map<String, Object> request = new HashMap<>(PlayerEventTestFactory.createEventRequest());
         request.put("adminId", player.getId());
-        request.put("date", "2021-01-01");
+        request.put("startDate", LocalDate.now().minusDays(1).toString());
 
         // WHEN
         var response = mvc.post(URL, request);
@@ -108,7 +109,7 @@ class CreateEventTest {
         // GIVEN
         Map<String, Object> request = new HashMap<>(PlayerEventTestFactory.createEventRequest());
         request.put("adminId", player.getId());
-        request.put("date", LocalDate.now().plusDays(8).toString());
+        request.put("startDate", LocalDate.now().plusDays(8).toString());
 
         // WHEN
         var response = mvc.post(URL, request);
@@ -124,8 +125,8 @@ class CreateEventTest {
         // GIVEN
         Map<String, Object> request = new HashMap<>(PlayerEventTestFactory.createEventRequest());
         request.put("adminId", player.getId());
-        request.put("startTime", "20:00");
-        request.put("endTime", "19:00");
+        request.put("startDate", ZonedDateTime.now().plusHours(1).toString());
+        request.put("endDate", ZonedDateTime.now().toString());
 
         // WHEN
         var response = mvc.post(URL, request);
