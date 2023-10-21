@@ -94,14 +94,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(DataBindingViolationException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Object> handleDataBindingViolationException(
             DataBindingViolationException dataBindingViolationException,
             WebRequest request) {
         log.error("Failed to save entity with associated data", dataBindingViolationException);
         return buildErrorResponse(
                 dataBindingViolationException,
-                HttpStatus.CONFLICT,
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 request);
     }
 
