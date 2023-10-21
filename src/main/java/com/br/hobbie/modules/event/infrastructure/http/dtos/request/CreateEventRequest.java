@@ -4,24 +4,22 @@ import com.br.hobbie.modules.event.domain.entities.Event;
 import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
 import com.br.hobbie.shared.core.errors.Either;
-import com.br.hobbie.shared.core.ports.DateTimeResolver;
 import com.br.hobbie.shared.core.ports.ExistentTagsResolver;
+import com.br.hobbie.shared.core.validators.DatesMatch;
 import com.br.hobbie.shared.core.validators.MaxDate;
-import com.br.hobbie.shared.core.validators.ValidDate;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.LongFunction;
 
 @Getter
-@ValidDate(fields = {"date", "startTime", "endTime"})
-public class CreateEventRequest implements DateTimeResolver {
+@DatesMatch(startDate = "startDate", endDate = "endDate")
+public class CreateEventRequest implements ZonedDateTimeRequest {
     @NotBlank
     private String name;
     private String description;
@@ -30,19 +28,16 @@ public class CreateEventRequest implements DateTimeResolver {
     @Min(value = 2)
     private Integer capacity;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @NotNull
     @FutureOrPresent
     @MaxDate(days = 7, message = "Date must be less than 7 days from now")
-    private LocalDate date;
+    private ZonedDateTime startDate;
 
-    @DateTimeFormat(pattern = "HH:mm")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @NotNull
-    private LocalTime startTime;
-
-    @DateTimeFormat(pattern = "HH:mm")
-    @NotNull
-    private LocalTime endTime;
+    @FutureOrPresent
+    private ZonedDateTime endDate;
 
     @NotNull
     @DecimalMin("-90.0")
@@ -78,23 +73,8 @@ public class CreateEventRequest implements DateTimeResolver {
                 .toArray(Tag[]::new));
 
 
-        var eventCreated = new Event(name, description, capacity, date, startTime, endTime, latitude, longitude, thumbnail, tags, playerOptional.get());
+        var eventCreated = new Event(name, description, capacity, startDate, endDate, latitude, longitude, thumbnail, tags, playerOptional.get());
 
         return Either.right(eventCreated);
-    }
-
-    @Override
-    public LocalTime startTime() {
-        return startTime;
-    }
-
-    @Override
-    public LocalTime endTime() {
-        return endTime;
-    }
-
-    @Override
-    public LocalDate date() {
-        return date;
     }
 }

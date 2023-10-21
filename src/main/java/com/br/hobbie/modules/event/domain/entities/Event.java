@@ -8,8 +8,7 @@ import lombok.Getter;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,9 +25,8 @@ public class Event {
     @Getter
     private String description;
     private int capacity;
-    private LocalDate date;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private ZonedDateTime startDate;
+    private ZonedDateTime endDate;
     private BigDecimal latitude;
     private BigDecimal longitude;
     private String thumbnail;
@@ -49,13 +47,12 @@ public class Event {
     protected Event() {
     }
 
-    public Event(String name, String description, int capacity, LocalDate date, LocalTime startTime, LocalTime endTime, BigDecimal latitude, BigDecimal longitude, String thumbnail, Set<Tag> categories, Player admin) {
+    public Event(String name, String description, int capacity, ZonedDateTime startDate, ZonedDateTime endDate, BigDecimal latitude, BigDecimal longitude, String thumbnail, Set<Tag> categories, Player admin) {
         this.name = name;
         this.description = description;
         this.capacity = capacity;
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.latitude = latitude;
         this.longitude = longitude;
         this.thumbnail = thumbnail;
