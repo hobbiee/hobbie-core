@@ -32,7 +32,7 @@ public class Player {
     @OneToOne(mappedBy = "admin")
     private Event adminEvent;
 
-    @OneToMany
+    @ManyToMany(mappedBy = "participants")
     private Set<Event> participantEvents = new LinkedHashSet<>();
 
     /**
@@ -113,4 +113,7 @@ public class Player {
         return Either.right(true);
     }
 
+    public boolean isSameOf(Player player) {
+        return id.equals(player.id);
+    }
 }

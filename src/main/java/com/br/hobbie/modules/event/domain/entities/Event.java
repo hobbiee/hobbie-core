@@ -15,6 +15,8 @@ import java.util.Set;
 
 @Entity
 public class Event {
+    @OneToMany(mappedBy = "event")
+    private final Set<ParticipationRequest> requests = new LinkedHashSet<>();
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -31,8 +33,6 @@ public class Event {
     private String thumbnail;
     @Getter
     private boolean active = true;
-
-
     @ManyToMany(cascade = CascadeType.PERSIST)
     private Set<Tag> categories = new LinkedHashSet<>();
 
@@ -40,7 +40,7 @@ public class Event {
     @OneToOne
     private Player admin;
 
-    @OneToMany
+    @ManyToMany
     private Set<Player> participants = new LinkedHashSet<>();
 
 
@@ -66,6 +66,10 @@ public class Event {
 
 
     public Either<RuntimeException, Boolean> addParticipant(Player player) {
+        if (!admin.equals(player) && participants.contains(player)) {
+            return Either.left(new RuntimeException("Player already joined"));
+        }
+
         if (participants.size() < capacity) {
             participants.add(player);
             var either = player.joinEvent(this);
@@ -93,5 +97,21 @@ public class Event {
             participants.clear();
             admin = null;
         }
+    }
+
+    public boolean isOwner(Player player) {
+        return admin.isSameOf(player);
+    }
+
+    public boolean alreadyParticipating(Player player) {
+        return participants.contains(player);
+    }
+
+    public boolean isFull() {
+        return participants.size() == capacity;
+    }
+
+    public boolean requestAlreadySent(Player player) {
+        return requests.stream().anyMatch(request -> request.isFrom(player));
     }
 }
