@@ -93,4 +93,9 @@ public class Event {
     public boolean requestAlreadySent(Player player) {
         return requests.stream().anyMatch(request -> request.isFrom(player));
     }
+
+    public boolean overlapsWith(Event event) {
+        // player cannot send interest to an event that starts at least 1 hour before or after the event
+        return startDate.isBefore(event.endDate.minusHours(1)) && endDate.isAfter(event.startDate.plusHours(1));
+    }
 }

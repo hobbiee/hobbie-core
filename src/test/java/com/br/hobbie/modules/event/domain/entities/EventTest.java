@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/**
+ * Unit tests for {@link Event}
+ */
 @ExtendWith(MockitoExtension.class)
 class EventTest {
     private Event event;
@@ -92,4 +95,6 @@ class EventTest {
         // THEN
         Assertions.assertFalse(result);
     }
+
+    
 }

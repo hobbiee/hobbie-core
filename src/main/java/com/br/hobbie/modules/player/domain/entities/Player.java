@@ -1,8 +1,11 @@
 package com.br.hobbie.modules.player.domain.entities;
 
 import com.br.hobbie.modules.event.domain.entities.Event;
+import com.br.hobbie.modules.event.domain.entities.ParticipationRequest;
+import com.br.hobbie.shared.core.errors.Either;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NonNull;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
@@ -17,6 +20,10 @@ public class Player {
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     private final Set<Tag> interests = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "player", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private final Set<ParticipationRequest> joinRequests = new LinkedHashSet<>();
+
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -78,5 +85,19 @@ public class Player {
 
     public boolean isSameOf(Player player) {
         return Objects.equals(id, player.id);
+    }
+
+    public Either<IllegalStateException, ParticipationRequest> sendInterest(@NonNull Event event) {
+        if (!canSendInterest(event)) {
+            return Either.left(new IllegalStateException("Player already has an event at this time"));
+        }
+
+        var participationRequest = new ParticipationRequest(this, event);
+        joinRequests.add(participationRequest);
+        return Either.right(participationRequest);
+    }
+
+    private boolean canSendInterest(Event event) {
+        return participantEvents.stream().noneMatch(event::overlapsWith);
     }
 }
