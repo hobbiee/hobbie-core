@@ -3,7 +3,7 @@ package com.br.hobbie.shared.factory;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class ValidDateValidorTestFactory {
+public class ValidDateValidatorTestFactory {
 
     public static FakeDateTimeResolver validDate() {
         if (LocalTime.now().isBefore(LocalTime.of(23, 0))) {

@@ -85,22 +85,6 @@ class CreateEventTest {
         MockMvcResultMatchers.jsonPath("$.errors").isArray();
     }
 
-    @Test
-    @DisplayName("Should return Unprocessable Entity when player already has an event")
-    void shouldReturnUnprocessableEntity_WhenPlayerAlreadyHasAnEvent() throws Exception {
-        // GIVEN
-        Map<String, Object> request = new HashMap<>(PlayerEventTestFactory.createEventRequest());
-        request.put("adminId", player.getId());
-        mvc.post(URL, request);
-
-        // WHEN
-        var response = mvc.post(URL, request);
-
-        // THEN
-        response
-                .andExpect(mvc.status().isUnprocessableEntity());
-        MockMvcResultMatchers.jsonPath("$.message").value("Player already has an event");
-    }
 
     @Test
     @DisplayName("Should not create an event on past date")

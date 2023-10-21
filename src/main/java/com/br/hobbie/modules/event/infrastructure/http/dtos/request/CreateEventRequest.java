@@ -54,7 +54,6 @@ public class CreateEventRequest implements DateTimeResolver {
     @DecimalMax("180.0")
     private BigDecimal longitude;
 
-    
     private String thumbnail;
 
     @NotEmpty

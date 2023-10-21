@@ -1,7 +1,7 @@
 package com.br.hobbie.shared.core.validators;
 
 import com.br.hobbie.shared.factory.FakeDateTimeResolver;
-import com.br.hobbie.shared.factory.ValidDateValidorTestFactory;
+import com.br.hobbie.shared.factory.ValidDateValidatorTestFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +24,7 @@ class ValidDateValidatorTest {
     @DisplayName("Should return true when date is valid")
     void shouldReturnTrue_WhenDateIsValid() {
         // GIVEN
-        fakeDateTimeResolver = ValidDateValidorTestFactory.validDate();
+        fakeDateTimeResolver = ValidDateValidatorTestFactory.validDate();
 
         // WHEN
         boolean isValid = validDateValidator.isValid(fakeDateTimeResolver, null);
@@ -37,7 +37,7 @@ class ValidDateValidatorTest {
     @DisplayName("Should return false when date is valid and starts at 23 hours")
     void shouldReturnFalse_WhenDateIsValidAndStartsAt23Hours() {
         // GIVEN
-        fakeDateTimeResolver = ValidDateValidorTestFactory.validDateStartsAt23Hours();
+        fakeDateTimeResolver = ValidDateValidatorTestFactory.validDateStartsAt23Hours();
 
         // WHEN
         boolean isValid = validDateValidator.isValid(fakeDateTimeResolver, null);
@@ -61,7 +61,7 @@ class ValidDateValidatorTest {
     @DisplayName("Should return false when date starts after 23 hours")
     void shouldReturnFalse_WhenDateStartsAfter23Hours() {
         // GIVEN
-        fakeDateTimeResolver = ValidDateValidorTestFactory.invalidDateStartsAtMidnight();
+        fakeDateTimeResolver = ValidDateValidatorTestFactory.invalidDateStartsAtMidnight();
 
         // WHEN
         boolean isValid = validDateValidator.isValid(fakeDateTimeResolver, null);
@@ -74,7 +74,7 @@ class ValidDateValidatorTest {
     @DisplayName("Should return false when date ends before start")
     void shouldReturnFalse_WhenDateEndsBeforeStart() {
         // GIVEN
-        fakeDateTimeResolver = ValidDateValidorTestFactory.invalidDateEndsBeforeStart();
+        fakeDateTimeResolver = ValidDateValidatorTestFactory.invalidDateEndsBeforeStart();
 
         // WHEN
         boolean isValid = validDateValidator.isValid(fakeDateTimeResolver, null);
@@ -87,7 +87,7 @@ class ValidDateValidatorTest {
     @DisplayName("Should return false when date is tomorrow and starts after 23 hours")
     void shouldReturnFalse_WhenDateIsTomorrowAndStartsAfter23Hours() {
         // GIVEN
-        fakeDateTimeResolver = ValidDateValidorTestFactory.invalidDateTomorrowStartingAfterElevenPM();
+        fakeDateTimeResolver = ValidDateValidatorTestFactory.invalidDateTomorrowStartingAfterElevenPM();
 
         // WHEN
         boolean isValid = validDateValidator.isValid(fakeDateTimeResolver, null);
