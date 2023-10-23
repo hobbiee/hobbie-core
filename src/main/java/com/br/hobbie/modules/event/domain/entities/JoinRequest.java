@@ -2,12 +2,14 @@ package com.br.hobbie.modules.event.domain.entities;
 
 import com.br.hobbie.modules.player.domain.entities.Player;
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.springframework.util.Assert;
 
 import java.time.Instant;
 
 @Entity
-public class ParticipationRequest {
+public class JoinRequest {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -27,10 +29,10 @@ public class ParticipationRequest {
      * @deprecated JPA eyes only
      */
     @Deprecated(since = "JPA only")
-    protected ParticipationRequest() {
+    protected JoinRequest() {
     }
 
-    public ParticipationRequest(Player player, Event event) {
+    public JoinRequest(Player player, Event event) {
         Assert.state(!event.isOwner(player), "Player cannot request participation in his own event");
         Assert.isTrue(event.notParticipant(player), "Player is already participating in this event");
         Assert.state(!event.capacityReached(), "Event is already full");
@@ -59,7 +61,7 @@ public class ParticipationRequest {
      * @param status      - RequestStatus, which can be PENDING, ACCEPTED or REJECTED
      * @param requestTime - Instant, which is the time the request was sent
      */
-    public ParticipationRequest(Player player, Event event, RequestStatus status, Instant requestTime) {
+    public JoinRequest(Player player, Event event, RequestStatus status, Instant requestTime) {
         Assert.state(!event.isOwner(player), "Player cannot request participation in his own event");
         Assert.isTrue(event.notParticipant(player), "Player is already participating in this event");
         Assert.state(!event.capacityReached(), "Event is already full");
@@ -72,5 +74,9 @@ public class ParticipationRequest {
 
     public boolean isFrom(Player player) {
         return this.player.isSameOf(player);
+    }
+
+    public boolean isExpired() {
+        return status == RequestStatus.EXPIRED;
     }
 }

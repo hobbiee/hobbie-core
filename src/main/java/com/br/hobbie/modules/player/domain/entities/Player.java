@@ -1,7 +1,7 @@
 package com.br.hobbie.modules.player.domain.entities;
 
 import com.br.hobbie.modules.event.domain.entities.Event;
-import com.br.hobbie.modules.event.domain.entities.ParticipationRequest;
+import com.br.hobbie.modules.event.domain.entities.JoinRequest;
 import com.br.hobbie.shared.core.errors.Either;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class Player {
     private final Set<Tag> interests = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "player", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private final Set<ParticipationRequest> joinRequests = new LinkedHashSet<>();
+    private final Set<JoinRequest> joinRequests = new LinkedHashSet<>();
 
     @Getter
     @Id
@@ -87,12 +87,12 @@ public class Player {
         return Objects.equals(id, player.id);
     }
 
-    public Either<IllegalStateException, ParticipationRequest> sendInterest(@NonNull Event event) {
+    public Either<IllegalStateException, JoinRequest> sendInterest(@NonNull Event event) {
         if (!canSendInterest(event)) {
             return Either.left(new IllegalStateException("Player already has an event at this time"));
         }
 
-        var participationRequest = new ParticipationRequest(this, event);
+        var participationRequest = new JoinRequest(this, event);
         joinRequests.add(participationRequest);
         return Either.right(participationRequest);
     }

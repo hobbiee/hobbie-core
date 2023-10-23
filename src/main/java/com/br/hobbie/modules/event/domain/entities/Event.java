@@ -16,7 +16,7 @@ import java.util.Set;
 @Entity
 public class Event {
     @OneToMany(mappedBy = "event")
-    private final Set<ParticipationRequest> requests = new LinkedHashSet<>();
+    private final Set<JoinRequest> requests = new LinkedHashSet<>();
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;

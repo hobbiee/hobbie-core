@@ -1,7 +1,7 @@
 package com.br.hobbie.modules.player.infrastructure.http.dtos.request;
 
 import com.br.hobbie.modules.event.domain.entities.Event;
-import com.br.hobbie.modules.event.domain.entities.ParticipationRequest;
+import com.br.hobbie.modules.event.domain.entities.JoinRequest;
 import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.shared.core.errors.Either;
 import jakarta.persistence.EntityManager;
@@ -19,7 +19,7 @@ public record InterestRequest(
         Long playerId
 ) {
 
-    public Either<IllegalStateException, ParticipationRequest> toEntity(EntityManager manager) {
+    public Either<IllegalStateException, JoinRequest> toEntity(EntityManager manager) {
         var event = manager.find(Event.class, eventId);
         var player = manager.find(Player.class, playerId);
 
