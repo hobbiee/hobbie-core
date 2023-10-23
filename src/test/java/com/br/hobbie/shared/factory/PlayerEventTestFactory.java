@@ -38,6 +38,12 @@ public class PlayerEventTestFactory {
         return new Event("name", "description", CAPACITY, START_DATE, END_DATE, LATITUDE, LONGITUDE, "thumbnail", TAGS, player);
     }
 
+    public static Event createStartedEvent(Player admin) {
+        var startDate = ZonedDateTime.now().minusMinutes(5);
+        var endDate = ZonedDateTime.now().plusHours(1);
+        return new Event("name", "description", CAPACITY, startDate, endDate, LATITUDE, LONGITUDE, "thumbnail", TAGS, admin);
+    }
+
     public static Map<String, Object> createEventRequest() {
         return Map.of(
                 "name", "name",
