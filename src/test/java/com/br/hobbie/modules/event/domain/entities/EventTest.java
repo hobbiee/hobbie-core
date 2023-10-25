@@ -10,15 +10,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/**
+ * Unit tests for {@link Event}
+ */
 @ExtendWith(MockitoExtension.class)
 class EventTest {
     private Event event;
-    private Player player;
 
     @BeforeEach
     void setUp() {
         event = PlayerEventTestFactory.createEvent();
-        player = PlayerEventTestFactory.createPlayer();
     }
 
     @Test
@@ -59,44 +60,10 @@ class EventTest {
         // GIVEN
         Player player = event.getAdmin();
 
-        // WHEN
-        Either<RuntimeException, Boolean> result = event.addParticipant(player);
-
-        // THEN
-        Assertions.assertTrue(result.isLeft());
-        Assertions.assertEquals("Player is already admin of this event", result.getLeft().getMessage());
-        Assertions.assertEquals(1, event.getParticipants().size());
+        // WHEN / THEN
+        Assertions.assertThrows(IllegalStateException.class, () -> event.addParticipant(player));
     }
 
-    @Test
-    @DisplayName("Should remove participant if player is admin")
-    void closeEvent_WhenPlayerIsAdmin() {
-        // GIVEN
-        Player player = event.getAdmin();
-
-        // WHEN
-        event.close(player);
-
-        // THEN
-        Assertions.assertFalse(event.isActive());
-        Assertions.assertEquals(0, event.getParticipants().size());
-        Assertions.assertNull(event.getAdmin());
-    }
-
-    @Test
-    @DisplayName("Should do nothing if player is not admin")
-    void closeEvent_WhenPlayerIsNotAdmin() {
-        // GIVEN
-        Player player = PlayerEventTestFactory.createParticipant();
-
-        // WHEN
-        event.close(player);
-
-        // THEN
-        Assertions.assertTrue(event.isActive());
-        Assertions.assertEquals(1, event.getParticipants().size());
-        Assertions.assertNotNull(event.getAdmin());
-    }
 
     @Test
     @DisplayName("Should return true if capacity is reached")
@@ -128,4 +95,6 @@ class EventTest {
         // THEN
         Assertions.assertFalse(result);
     }
+
+    
 }

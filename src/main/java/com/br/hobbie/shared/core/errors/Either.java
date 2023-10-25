@@ -1,5 +1,7 @@
 package com.br.hobbie.shared.core.errors;
 
+import lombok.Getter;
+
 /**
  * <h1>Either implementation to explicit error handling</h1>
  *
@@ -22,13 +24,28 @@ package com.br.hobbie.shared.core.errors;
  * @param <L> <p>The left value of Either, this value represents the error case</p>
  * @param <R> <p>The right value of Either, this value represents the success case</p>
  */
+@Getter
 public final class Either<L, R> {
     /**
      * <p>The left value of Either, this value represents the error case</p>
+     * -- GETTER --
+     * <p>Gets the left value of Either</p>
+     * <p>
+     * That could be an error message or an exception for example
+     * </p>
+     *
+     * @return <p>The left value of Either</p>
      */
     private final L left;
     /**
      * <p>The right value of Either, this value represents the success case</p>
+     * -- GETTER --
+     * <p>Gets the right value of Either</p>
+     * <p>
+     * That could be the result of a method for example
+     * </p>
+     *
+     * @return <p>The right value of Either</p>
      */
     private final R right;
 
@@ -88,27 +105,4 @@ public final class Either<L, R> {
     }
 
 
-    /**
-     * <p>Gets the left value of Either</p>
-     * <p>
-     * That could be an error message or an exception for example
-     * </p>
-     *
-     * @return <p>The left value of Either</p>
-     */
-    public L getLeft() {
-        return left;
-    }
-
-    /**
-     * <p>Gets the right value of Either</p>
-     * <p>
-     * That could be the result of a method for example
-     * </p>
-     *
-     * @return <p>The right value of Either</p>
-     */
-    public R getRight() {
-        return right;
-    }
 }

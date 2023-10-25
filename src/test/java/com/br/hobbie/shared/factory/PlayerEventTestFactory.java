@@ -6,16 +6,15 @@ import com.br.hobbie.modules.player.domain.entities.Tag;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Set;
 
 public class PlayerEventTestFactory {
-    static final LocalDate DATE = LocalDate.of(1999, 1, 1);
 
-    static final LocalDate DATE_TOMORROW = LocalDate.now().plusDays(1);
-    static final LocalTime START_TIME = LocalTime.of(10, 0);
-    static final LocalTime END_TIME = LocalTime.of(12, 0);
+    static final ZonedDateTime DATE_TOMORROW = ZonedDateTime.now().plusDays(1);
+    static final ZonedDateTime START_DATE = ZonedDateTime.now().plusDays(1);
+    static final ZonedDateTime END_DATE = ZonedDateTime.now().plusDays(2);
     static final BigDecimal LATITUDE = BigDecimal.ONE;
     static final BigDecimal LONGITUDE = BigDecimal.TEN;
 
@@ -36,11 +35,13 @@ public class PlayerEventTestFactory {
 
     public static Event createEvent() {
         Player player = createPlayer();
-        return new Event("name", "description", CAPACITY, DATE, START_TIME, END_TIME, LATITUDE, LONGITUDE, "thumbnail", TAGS, player);
+        return new Event("name", "description", CAPACITY, START_DATE, END_DATE, LATITUDE, LONGITUDE, "thumbnail", TAGS, player);
     }
 
-    public static Tag createTag() {
-        return new Tag("DIFFERENT TAG");
+    public static Event createStartedEvent(Player admin) {
+        var startDate = ZonedDateTime.now().minusMinutes(5);
+        var endDate = ZonedDateTime.now().plusHours(1);
+        return new Event("name", "description", CAPACITY, startDate, endDate, LATITUDE, LONGITUDE, "thumbnail", TAGS, admin);
     }
 
     public static Map<String, Object> createEventRequest() {
@@ -49,8 +50,8 @@ public class PlayerEventTestFactory {
                 "description", "description",
                 "capacity", CAPACITY,
                 "date", DATE_TOMORROW.toString(),
-                "startTime", START_TIME.toString(),
-                "endTime", END_TIME.toString(),
+                "startDate", START_DATE.toString(),
+                "endDate", END_DATE.toString(),
                 "latitude", LATITUDE,
                 "longitude", LONGITUDE,
                 "thumbnail", "thumbnail",

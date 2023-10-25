@@ -7,12 +7,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(properties = "spring.profiles.active=test")
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "spring.profiles.active=test"
+)
 class ResolveExistentTagsTest {
 
     @Autowired
@@ -26,9 +29,10 @@ class ResolveExistentTagsTest {
 
     @BeforeEach
     void setUp() {
-        tags = new Tag[2];
-        tags[0] = new Tag("soccer");
-        tags[1] = new Tag("basketball");
+        tags = new Tag[]{
+                new Tag("tag with spaces"),
+                new Tag("tag_without_spaces")
+        };
     }
 
     @Test
