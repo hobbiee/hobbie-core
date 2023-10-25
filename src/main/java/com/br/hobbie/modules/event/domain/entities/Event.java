@@ -98,4 +98,25 @@ public class Event {
         // player cannot send interest to an event that starts at least 1 hour before or after the event
         return startDate.isBefore(event.endDate.minusHours(1)) && endDate.isAfter(event.startDate.plusHours(1));
     }
+
+
+    public boolean hasJoinRequestFrom(Player player) {
+        return requests.stream().anyMatch(request -> request.isFrom(player));
+    }
+
+    public void acceptJoinRequest(Player joiningParticipant) {
+        Assert.state(hasJoinRequestFrom(joiningParticipant), "Player must have a join request");
+        requests.stream()
+                .filter(joinRequest -> joinRequest.isFrom(joiningParticipant))
+                .findFirst()
+                .ifPresent(JoinRequest::accept);
+    }
+
+    public void rejectJoinRequest(Player joiningPlayer) {
+        Assert.state(hasJoinRequestFrom(joiningPlayer), "Player must have a join request");
+        requests.stream()
+                .filter(joinRequest -> joinRequest.isFrom(joiningPlayer))
+                .findFirst()
+                .ifPresent(JoinRequest::reject);
+    }
 }

@@ -79,4 +79,15 @@ public class JoinRequest {
     public boolean isExpired() {
         return status == RequestStatus.EXPIRED;
     }
+
+    public void accept() {
+        Assert.state(status == RequestStatus.PENDING, "Request must be pending");
+        status = RequestStatus.ACCEPTED;
+        event.addParticipant(player);
+    }
+
+    public void reject() {
+        Assert.state(status == RequestStatus.PENDING, "Request must be pending");
+        status = RequestStatus.REJECTED;
+    }
 }

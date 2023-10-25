@@ -88,6 +88,8 @@ public class Player {
     }
 
     public Either<IllegalStateException, JoinRequest> sendInterest(@NonNull Event event) {
+        Assert.isTrue(!event.isOwner(this), "Player cannot request participation in his own event");
+
         if (!canSendInterest(event)) {
             return Either.left(new IllegalStateException("Player already has an event at this time"));
         }
@@ -99,5 +101,26 @@ public class Player {
 
     private boolean canSendInterest(Event event) {
         return participantEvents.stream().noneMatch(event::overlapsWith);
+    }
+
+    public Either<RuntimeException, Void> acceptJoinRequest(Player joiningParticipant, Event event) {
+        Assert.isTrue(event.isOwner(this), "Player must be the admin of the event");
+        Assert.isTrue(adminEvents.contains(event), "Player must be the admin of the event");
+
+        if (event.hasJoinRequestFrom(joiningParticipant)) {
+            event.acceptJoinRequest(joiningParticipant);
+            return Either.right(null);
+        }
+
+        return Either.left(new RuntimeException("Player must have a join request"));
+    }
+
+    public void rejectJoinRequest(Player joiningPlayer, Event event) {
+        Assert.isTrue(event.isOwner(this), "Player must be the admin of the event");
+        Assert.isTrue(adminEvents.contains(event), "Player must be the admin of the event");
+
+        if (event.hasJoinRequestFrom(joiningPlayer)) {
+            event.rejectJoinRequest(joiningPlayer);
+        }
     }
 }
