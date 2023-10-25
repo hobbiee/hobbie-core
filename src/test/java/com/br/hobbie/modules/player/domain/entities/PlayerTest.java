@@ -77,30 +77,4 @@ class PlayerTest {
         Assertions.assertTrue(player.getParticipantEvents().contains(event));
     }
 
-
-    @Test
-    @DisplayName("Should be able to join an event if allow new participants, if is active and if is not admin")
-    void joinEvent_WhenSuccessFull() {
-        // GIVEN - setUp
-        Player other = new Player("other name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
-        player.createEvent(event);
-
-
-        // WHEN
-        other.joinEvent(event);
-
-        // THEN
-        Assertions.assertTrue(event.getParticipants().contains(other));
-    }
-
-
-    @Test
-    @DisplayName("Should not be able to join an event if is admin")
-    void joinEvent_ReturnsEitherErrorWhenAdmin() {
-        // GIVEN - setUp
-        player.createEvent(event);
-
-        // WHEN / THEN
-        Assertions.assertThrows(IllegalStateException.class, () -> player.joinEvent(event));
-    }
 }

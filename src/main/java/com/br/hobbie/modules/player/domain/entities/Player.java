@@ -76,13 +76,6 @@ public class Player {
         return List.copyOf(participantEvents);
     }
 
-
-    public void joinEvent(Event event) {
-        Assert.isTrue(event.isActive(), "Event must be active");
-        Assert.isTrue(!event.capacityReached(), "Event must have capacity");
-        event.addParticipant(this);
-    }
-
     public boolean isSameOf(Player player) {
         return Objects.equals(id, player.id);
     }
