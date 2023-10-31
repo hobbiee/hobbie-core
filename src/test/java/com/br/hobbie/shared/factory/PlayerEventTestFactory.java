@@ -15,8 +15,10 @@ public class PlayerEventTestFactory {
     static final ZonedDateTime DATE_TOMORROW = ZonedDateTime.now().plusDays(1);
     static final ZonedDateTime START_DATE = ZonedDateTime.now().plusDays(1);
     static final ZonedDateTime END_DATE = ZonedDateTime.now().plusDays(2);
-    static final BigDecimal LATITUDE = BigDecimal.ONE;
-    static final BigDecimal LONGITUDE = BigDecimal.TEN;
+    static final Float LATITUDE = 10F;
+    static final Float LONGITUDE = 10F;
+
+    static final BigDecimal RADIUS = BigDecimal.valueOf(100);
 
     static final int CAPACITY = 10;
 
@@ -26,11 +28,11 @@ public class PlayerEventTestFactory {
     private Event event;
 
     public static Player createPlayer() {
-        return new Player("name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
+        return new Player("name", "avatar", 10F, 20F, RADIUS, LocalDate.of(1999, 1, 1));
     }
 
     public static Player createParticipant() {
-        return new Player("PLAYER PARTICIPANT", "avatar", BigDecimal.TEN, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
+        return new Player("PLAYER PARTICIPANT", "avatar", 10F, 10F, RADIUS, LocalDate.of(1999, 1, 1));
     }
 
     public static Event createEvent() {

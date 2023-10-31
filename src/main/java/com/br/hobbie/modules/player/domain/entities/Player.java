@@ -30,9 +30,19 @@ public class Player {
     private Long id;
     @Getter
     private String name;
+    @Getter
     private String avatar;
-    private BigDecimal matchLatitude;
-    private BigDecimal matchLongitude;
+
+    /**
+     * <p>
+     * The first 3 attributes below are used to control the matching of players with events based on their location.
+     * </p>
+     */
+    private Float matchLatitude;
+    private Float matchLongitude;
+
+    private BigDecimal radius;
+
     private LocalDate birthDate;
 
     @Getter
@@ -49,12 +59,13 @@ public class Player {
     protected Player() {
     }
 
-    public Player(String name, String avatar, BigDecimal matchLatitude, BigDecimal matchLongitude, LocalDate birthDate) {
+    public Player(String name, String avatar, Float matchLatitude, Float matchLongitude, BigDecimal radius, LocalDate birthDate) {
         this.name = name;
         this.avatar = avatar;
         this.matchLatitude = matchLatitude;
         this.matchLongitude = matchLongitude;
         this.birthDate = birthDate;
+        this.radius = radius;
     }
 
     public void addInterest(Tag tag) {
@@ -115,5 +126,21 @@ public class Player {
         if (event.hasJoinRequestFrom(joiningPlayer)) {
             event.rejectJoinRequest(joiningPlayer);
         }
+    }
+
+    public boolean distanceIsWithinRadius(double distance) {
+        return radius.multiply(BigDecimal.valueOf(1000)).compareTo(BigDecimal.valueOf(distance)) >= 0;
+    }
+
+    public float getMatchLatitude() {
+        return matchLatitude;
+    }
+
+    public float getMatchLongitude() {
+        return matchLongitude;
+    }
+
+    public boolean hasInterestIn(Tag tag) {
+        return interests.stream().noneMatch(interest -> interest.isSameOf(tag));
     }
 }

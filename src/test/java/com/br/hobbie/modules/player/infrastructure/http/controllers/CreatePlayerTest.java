@@ -29,6 +29,7 @@ class CreatePlayerTest {
                 "avatar", "https://www.google.com",
                 "latitude", 10,
                 "longitude", 10,
+                "radius", 100,
                 "birthDate", "1990-01-01",
                 "interests", new String[]{"FOOTBALL", "MUSIC"}
         );
@@ -73,6 +74,7 @@ class CreatePlayerTest {
                 "avatar", "https://www.google.com",
                 "latitude", 10,
                 "longitude", 10,
+                "radius", 100,
                 "birthDate", "1990-01-01",
                 "interests", new String[]{}
         );

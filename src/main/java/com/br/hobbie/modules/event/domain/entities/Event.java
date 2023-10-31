@@ -7,11 +7,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Event {
@@ -24,18 +21,24 @@ public class Event {
     private String name;
     @Getter
     private String description;
+    @Getter
     private int capacity;
     private ZonedDateTime startDate;
     private ZonedDateTime endDate;
-    private BigDecimal latitude;
-    private BigDecimal longitude;
+
+    @Getter
+    private Float latitude;
+
+    @Getter
+    private Float longitude;
+
+    @Getter
     private String thumbnail;
     @Getter
     private boolean active = true;
     @ManyToMany(cascade = CascadeType.PERSIST)
     private Set<Tag> categories = new LinkedHashSet<>();
 
-    @Getter
     @ManyToOne
     private Player admin;
 
@@ -47,7 +50,7 @@ public class Event {
     protected Event() {
     }
 
-    public Event(String name, String description, int capacity, ZonedDateTime startDate, ZonedDateTime endDate, BigDecimal latitude, BigDecimal longitude, String thumbnail, Set<Tag> categories, Player admin) {
+    public Event(String name, String description, int capacity, ZonedDateTime startDate, ZonedDateTime endDate, Float latitude, Float longitude, String thumbnail, Set<Tag> categories, Player admin) {
         this.name = name;
         this.description = description;
         this.capacity = capacity;
@@ -118,5 +121,47 @@ public class Event {
                 .filter(joinRequest -> joinRequest.isFrom(joiningPlayer))
                 .findFirst()
                 .ifPresent(JoinRequest::reject);
+    }
+
+    public String getAdminName() {
+        return admin.getName();
+    }
+
+    public String getAdminAvatar() {
+        return admin.getAvatar();
+    }
+
+    public String[] getCategoriesNames() {
+        return categories.stream().map(Tag::getName).toArray(String[]::new);
+    }
+
+    public int getAmountOfParticipants() {
+        return participants.size();
+    }
+
+    public String getFormattedDate() {
+        return startDate.getDayOfMonth() + "/" + startDate.getMonthValue() + "/" + startDate.getYear();
+    }
+
+    public String getFormattedStartTime() {
+        return startDate.getHour() + ":" + startDate.getMinute();
+    }
+
+    public String getFormattedEndTime() {
+        return endDate.getHour() + ":" + endDate.getMinute();
+    }
+
+    public Player getAdmin() {
+        return admin;
+    }
+
+    public Set<Tag> distinctTagsFrom(Player player) {
+        return categories.stream()
+                .filter(tag -> !player.hasInterestIn(tag))
+                .collect(HashSet::new, HashSet::add, HashSet::addAll);
+    }
+
+    public Collection<Tag> getCategories() {
+        return Collections.unmodifiableCollection(categories);
     }
 }

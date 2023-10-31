@@ -59,4 +59,8 @@ public class Tag {
     public int hashCode() {
         return Objects.hash(id, name);
     }
+
+    public boolean isSameOf(Tag tag) {
+        return name.equalsIgnoreCase(tag.name);
+    }
 }
