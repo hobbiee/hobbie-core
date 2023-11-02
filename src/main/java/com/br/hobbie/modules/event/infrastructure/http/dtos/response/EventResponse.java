@@ -35,6 +35,7 @@ public record EventResponse(
 ) {
 
     public static EventResponse from(Event event, Player player, DistanceCalculator distanceCalculator) {
+        var distance = distanceCalculator.getDistance(player.getMatchLatitude(), player.getMatchLongitude(), event.getLatitude(), event.getLongitude());
         return new EventResponse(
                 event.getName(),
                 event.getDescription(),
@@ -50,7 +51,7 @@ public record EventResponse(
                 event.getAdminName(),
                 event.getAdminAvatar(),
                 event.getCategoriesNames(),
-                distanceCalculator.getDistance(player.getMatchLatitude(), player.getMatchLongitude(), event.getLatitude(), event.getLongitude())
+                (float) (Math.ceil(distance * 100) / 100f) // round to 2 decimal places
         );
     }
 
