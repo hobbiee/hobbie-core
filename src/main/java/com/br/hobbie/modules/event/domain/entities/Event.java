@@ -9,11 +9,14 @@ import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Event {
     @OneToMany(mappedBy = "event")
     private final Set<JoinRequest> requests = new LinkedHashSet<>();
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    private final Set<Tag> categories;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -25,20 +28,15 @@ public class Event {
     private int capacity;
     private ZonedDateTime startDate;
     private ZonedDateTime endDate;
-
     @Getter
     private Float latitude;
-
     @Getter
     private Float longitude;
-
     @Getter
     private String thumbnail;
     @Getter
     private boolean active = true;
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    private Set<Tag> categories = new LinkedHashSet<>();
-
+    @Getter
     @ManyToOne
     private Player admin;
 
@@ -48,6 +46,7 @@ public class Event {
 
     @Deprecated(since = "JPA only")
     protected Event() {
+        categories = Collections.emptySet();
     }
 
     public Event(String name, String description, int capacity, ZonedDateTime startDate, ZonedDateTime endDate, Float latitude, Float longitude, String thumbnail, Set<Tag> categories, Player admin) {
@@ -151,14 +150,10 @@ public class Event {
         return endDate.getHour() + ":" + endDate.getMinute();
     }
 
-    public Player getAdmin() {
-        return admin;
-    }
-
     public Set<Tag> distinctTagsFrom(Player player) {
         return categories.stream()
-                .filter(tag -> !player.hasInterestIn(tag))
-                .collect(HashSet::new, HashSet::add, HashSet::addAll);
+                .filter(category -> !player.hasInterestIn(category))
+                .collect(Collectors.toSet());
     }
 
     public Collection<Tag> getCategories() {
