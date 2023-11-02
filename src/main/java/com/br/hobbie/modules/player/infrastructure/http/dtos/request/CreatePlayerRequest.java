@@ -27,7 +27,7 @@ public record CreatePlayerRequest(
         Float longitude,
 
         @NotNull
-        @Range(min = 1, max = 100, message = "Radius must be between 1 and 100")
+        @Range(min = 250, max = 15000, message = "Radius must be between 250 and 15000 meters") // 15km
         BigDecimal radius,
 
         @NotNull(message = "Birth date is required")

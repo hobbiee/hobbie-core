@@ -18,26 +18,35 @@ public class PlayerEventTestFactory {
     static final Float LATITUDE = 10F;
     static final Float LONGITUDE = 10F;
 
+    static final Float VALID_PLAYER_LATITUDE = -20.298711F;
+    static final Float VALID_PLAYER_LONGITUDE = -40.298711F;
+
+    static final Float VALID_EVENT_LATITUDE = -20.298692F;
+    static final Float VALID_EVENT_LONGITUDE = -40.291370F;
+
     static final BigDecimal RADIUS = BigDecimal.valueOf(100);
 
     static final int CAPACITY = 10;
 
     static final Set<Tag> TAGS = Set.of(new Tag("tag1"), new Tag("tag2"));
 
+    static final Set<Tag> PLAYER_INTERESTS = Set.of(new Tag("SOCCER"), new Tag("BEACH SOCCER"));
+
     private Player player;
     private Event event;
 
     public static Player createPlayer() {
+
         return new Player("name", "avatar", 10F, 20F, RADIUS, LocalDate.of(1999, 1, 1));
     }
 
     public static Player createParticipant() {
-        return new Player("PLAYER PARTICIPANT", "avatar", 10F, 10F, RADIUS, LocalDate.of(1999, 1, 1));
+        return new Player("PLAYER PARTICIPANT", "avatar", VALID_PLAYER_LATITUDE, VALID_PLAYER_LONGITUDE, RADIUS, LocalDate.of(1999, 1, 1));
     }
 
     public static Event createEvent() {
         Player player = createPlayer();
-        return new Event("name", "description", CAPACITY, START_DATE, END_DATE, LATITUDE, LONGITUDE, "thumbnail", TAGS, player);
+        return new Event("name", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_PLAYER_LONGITUDE, "thumbnail", TAGS, player);
     }
 
     public static Event createStartedEvent(Player admin) {

@@ -10,20 +10,15 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Player {
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    private final Set<Tag> interests = new LinkedHashSet<>();
-
     @OneToMany(mappedBy = "player", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private final Set<JoinRequest> joinRequests = new LinkedHashSet<>();
-
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    private final Set<Tag> interests = new HashSet<>();
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -128,8 +123,20 @@ public class Player {
         }
     }
 
+    /**
+     * <h2>
+     * Checks if the distance is within the radius of the player
+     * </h2>
+     *
+     * <p>
+     * Both distance parameter and player's radius are and must be in meters
+     * </p>
+     *
+     * @param distance in meters
+     * @return true if the distance is within the radius of the player
+     */
     public boolean distanceIsWithinRadius(double distance) {
-        return radius.multiply(BigDecimal.valueOf(1000)).compareTo(BigDecimal.valueOf(distance)) >= 0;
+        return radius.compareTo(BigDecimal.valueOf(distance)) >= 0;
     }
 
     public float getMatchLatitude() {
