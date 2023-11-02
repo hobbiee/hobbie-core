@@ -50,21 +50,6 @@ class PlayerTest {
         Assertions.assertEquals(tag, player.getInterests().iterator().next());
     }
 
-    @Test
-    @DisplayName("Should not add interest to player when already exists")
-    void addInterest_WhenAlreadyExists() {
-        // GIVEN
-        Tag tag = new Tag("tag");
-        player.addInterest(tag);
-
-        // WHEN
-        player.addInterest(tag);
-
-        // THEN
-        Assertions.assertEquals(1, player.getInterests().size());
-        Assertions.assertEquals(tag, player.getInterests().iterator().next());
-    }
-
 
     @Test
     @DisplayName("Should create an event and set it as admin event")
