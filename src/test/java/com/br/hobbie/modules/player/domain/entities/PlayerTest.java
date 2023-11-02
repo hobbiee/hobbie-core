@@ -1,6 +1,7 @@
 package com.br.hobbie.modules.player.domain.entities;
 
 import com.br.hobbie.modules.event.domain.entities.Event;
+import com.br.hobbie.shared.factory.PlayerEventTestFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
@@ -20,8 +19,6 @@ class PlayerTest {
     static final Float LATITUDE = 10F;
     static final Float LONGITUDE = 10F;
 
-    static final BigDecimal RADIUS = BigDecimal.valueOf(100);
-
     static final int CAPACITY = 10;
 
     static final Set<Tag> TAGS = Set.of(new Tag("tag1"), new Tag("tag2"));
@@ -31,8 +28,7 @@ class PlayerTest {
 
     @BeforeEach
     void setUp() {
-        player = new Player("name", "avatar", 10F, 10F, RADIUS, LocalDate.of(1999, 1, 1));
-
+        player = PlayerEventTestFactory.createPlayer();
         event = new Event("name", "description", CAPACITY, START_DATE, END_DATE, LATITUDE, LONGITUDE, "thumbnail", TAGS, player);
     }
 
