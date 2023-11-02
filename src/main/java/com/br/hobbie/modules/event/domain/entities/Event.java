@@ -152,11 +152,15 @@ public class Event {
 
     public Set<Tag> distinctTagsFrom(Player player) {
         return categories.stream()
-                .filter(category -> !player.hasInterestIn(category))
+                .filter(player::notInterestedIn)
                 .collect(Collectors.toSet());
     }
 
     public Collection<Tag> getCategories() {
         return Collections.unmodifiableCollection(categories);
+    }
+
+    public void beeingRequested(JoinRequest joinRequest) {
+        requests.add(joinRequest);
     }
 }

@@ -41,7 +41,7 @@ public class AcceptJoinRequest {
         Assert.state(playerWhoIsBeingAccepted != null, "Something went wrong, maybe the entered player who is being accepted does not exist");
 
         return eventRepository.findById(form.eventId()).map(event -> {
-            Either<RuntimeException, Void> acceptedOrError = playerWhoIsAccepting.acceptJoinRequest(playerWhoIsBeingAccepted, event);
+            Either<RuntimeException, Boolean> acceptedOrError = playerWhoIsAccepting.acceptJoinRequest(playerWhoIsBeingAccepted, event);
 
             if (acceptedOrError.isLeft())
                 return ResponseEntity.unprocessableEntity().body(acceptedOrError.getLeft().getMessage());

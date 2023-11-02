@@ -80,6 +80,6 @@ class ResolveExistentTagsTest {
     }
 
     private boolean playerDoesNotHaveInterestOnCategories(Event event) {
-        return event.getCategories().stream().anyMatch(tag -> !player.hasInterestIn(tag));
+        return event.getCategories().stream().anyMatch(tag -> player.notInterestedIn(tag));
     }
 }

@@ -7,7 +7,9 @@ import com.br.hobbie.modules.player.domain.entities.Tag;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class PlayerEventTestFactory {
@@ -24,7 +26,7 @@ public class PlayerEventTestFactory {
     static final Float VALID_EVENT_LATITUDE = -20.298692F;
     static final Float VALID_EVENT_LONGITUDE = -40.291370F;
 
-    static final BigDecimal RADIUS = BigDecimal.valueOf(100);
+    static final BigDecimal RADIUS = BigDecimal.valueOf(400);
 
     static final int CAPACITY = 10;
 
@@ -36,12 +38,15 @@ public class PlayerEventTestFactory {
     private Event event;
 
     public static Player createPlayer() {
-
-        return new Player("name", "avatar", 10F, 20F, RADIUS, LocalDate.of(1999, 1, 1));
+        var player = new Player("name", "avatar", 10F, 20F, RADIUS, LocalDate.of(1999, 1, 1));
+        assignId(player, 1L);
+        return player;
     }
 
     public static Player createParticipant() {
-        return new Player("PLAYER PARTICIPANT", "avatar", VALID_PLAYER_LATITUDE, VALID_PLAYER_LONGITUDE, RADIUS, LocalDate.of(1999, 1, 1));
+        var player = new Player("PLAYER PARTICIPANT", "avatar", VALID_PLAYER_LATITUDE, VALID_PLAYER_LONGITUDE, RADIUS, LocalDate.of(1999, 1, 1));
+        assignId(player, 2L);
+        return player;
     }
 
     public static Event createEvent() {
@@ -84,5 +89,18 @@ public class PlayerEventTestFactory {
                 "thumbnail", "thumbnail",
                 "categories", Set.of("tag1", "tag2").toArray()
         );
+    }
+
+    public static void assignId(Player player, Long value) {
+        Arrays.stream(player.getClass().getDeclaredFields()).forEach(field -> {
+            field.setAccessible(true);
+            if (Objects.equals(field.getName(), "id")) {
+                try {
+                    field.set(player, value);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 }

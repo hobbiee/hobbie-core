@@ -10,7 +10,10 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Player {
@@ -33,9 +36,12 @@ public class Player {
      * The first 3 attributes below are used to control the matching of players with events based on their location.
      * </p>
      */
+    @Getter
     private Float matchLatitude;
+    @Getter
     private Float matchLongitude;
 
+    @Getter
     private BigDecimal radius;
 
     private LocalDate birthDate;
@@ -67,9 +73,6 @@ public class Player {
         interests.add(tag);
     }
 
-    public Set<Tag> getInterests() {
-        return Set.copyOf(interests);
-    }
 
     public void createEvent(Event event) {
         Assert.isTrue(event.isOwner(this), "Player must be the admin of the event");
@@ -77,12 +80,9 @@ public class Player {
         participantEvents.add(event);
     }
 
-    public List<Event> getParticipantEvents() {
-        // returns a copy of the participant events to remain immutable
-        return List.copyOf(participantEvents);
-    }
-
     public boolean isSameOf(Player player) {
+        Objects.requireNonNull(player.id, "Player id cannot be null");
+        Objects.requireNonNull(id, "Player id cannot be null");
         return Objects.equals(id, player.id);
     }
 
@@ -102,13 +102,13 @@ public class Player {
         return participantEvents.stream().noneMatch(event::overlapsWith);
     }
 
-    public Either<RuntimeException, Void> acceptJoinRequest(Player joiningParticipant, Event event) {
+    public Either<RuntimeException, Boolean> acceptJoinRequest(Player joiningParticipant, Event event) {
         Assert.isTrue(event.isOwner(this), "Player must be the admin of the event");
         Assert.isTrue(adminEvents.contains(event), "Player must be the admin of the event");
 
         if (event.hasJoinRequestFrom(joiningParticipant)) {
             event.acceptJoinRequest(joiningParticipant);
-            return Either.right(null);
+            return Either.right(true);
         }
 
         return Either.left(new RuntimeException("Player must have a join request"));
@@ -139,15 +139,15 @@ public class Player {
         return radius.compareTo(BigDecimal.valueOf(distance)) >= 0;
     }
 
-    public float getMatchLatitude() {
-        return matchLatitude;
-    }
-
-    public float getMatchLongitude() {
-        return matchLongitude;
+    public boolean notInterestedIn(Tag tag) {
+        return interests.stream().anyMatch(interest -> interest.isSameOf(tag));
     }
 
     public boolean hasInterestIn(Tag tag) {
-        return interests.stream().noneMatch(interest -> interest.isSameOf(tag));
+        return interests.stream().anyMatch(interest -> interest.isSameOf(tag));
+    }
+
+    public boolean isParticipant(Event event) {
+        return participantEvents.contains(event);
     }
 }
