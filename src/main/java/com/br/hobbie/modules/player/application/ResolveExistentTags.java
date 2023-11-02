@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,9 +41,7 @@ public class ResolveExistentTags implements ExistentTagsResolver {
     @Override
     public Set<Tag> extractDistinctTags(Collection<Event> events, Player player) {
         return events.stream()
-                .map(event -> event.getCategories().stream()
-                        .filter(category -> !player.getInterests().contains(category))
-                        .collect(Collectors.toSet()))
+                .map(event -> event.distinctTagsFrom(player))
                 .reduce(new HashSet<>(), (acc, tags) -> {
                     acc.addAll(tags);
                     return acc;
