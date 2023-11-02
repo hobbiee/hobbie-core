@@ -55,6 +55,22 @@ public class PlayerEventTestFactory {
         return new Event("name", "description", CAPACITY, startDate, endDate, LATITUDE, LONGITUDE, "thumbnail", TAGS, admin);
     }
 
+    public static Set<Event> createManyEvents() {
+        return Set.of(
+                new Event("FUTEBOL", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(new Tag("SOCCER")), createPlayer()),
+
+
+                new Event("BASQUETE", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(new Tag("BASKETBALL"), new Tag("VOLLEYBALL")), createPlayer()),
+
+
+                new Event("TENIS", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(new Tag("BEACH SOCCER"), new Tag("TENNIS")), createPlayer()),
+
+                new Event("HÓQUEI", "description", CAPACITY, START_DATE, END_DATE, 90F, -80F, "thumbnail", Set.of(new Tag("HOQUEI")), createParticipant()),
+
+                new Event("BEACH SOCCER", "description", CAPACITY, START_DATE, END_DATE, -50.42422F, -30.424252F, "thumbnail", TAGS, createPlayer())
+        );
+    }
+
     public static Map<String, Object> createEventRequest() {
         return Map.of(
                 "name", "name",
