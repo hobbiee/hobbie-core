@@ -41,7 +41,7 @@ public class JoinRequest {
         this.event = event;
         requestTime = Instant.now();
         status = RequestStatus.PENDING;
-        this.event.beeingRequested(this);
+        this.event.newJoinRequest(this);
     }
 
     public boolean isFrom(Player player) {
@@ -65,5 +65,9 @@ public class JoinRequest {
 
     public boolean isRejected() {
         return status == RequestStatus.REJECTED;
+    }
+
+    public boolean isAccepted() {
+        return status == RequestStatus.ACCEPTED;
     }
 }

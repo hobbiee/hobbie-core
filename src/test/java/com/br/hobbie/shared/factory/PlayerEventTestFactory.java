@@ -3,13 +3,12 @@ package com.br.hobbie.shared.factory;
 import com.br.hobbie.modules.event.domain.entities.Event;
 import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
+import com.br.hobbie.shared.utils.PlayerEventTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 public class PlayerEventTestFactory {
@@ -39,13 +38,13 @@ public class PlayerEventTestFactory {
 
     public static Player createPlayer() {
         var player = new Player("name", "avatar", 10F, 20F, RADIUS, LocalDate.of(1999, 1, 1));
-        assignId(player, 1L);
+        PlayerEventTestUtils.assignId(player, 1L);
         return player;
     }
 
     public static Player createParticipant() {
         var player = new Player("PLAYER PARTICIPANT", "avatar", VALID_PLAYER_LATITUDE, VALID_PLAYER_LONGITUDE, RADIUS, LocalDate.of(1999, 1, 1));
-        assignId(player, 2L);
+        PlayerEventTestUtils.assignId(player, 2L);
         return player;
     }
 
@@ -91,16 +90,19 @@ public class PlayerEventTestFactory {
         );
     }
 
-    public static void assignId(Player player, Long value) {
-        Arrays.stream(player.getClass().getDeclaredFields()).forEach(field -> {
-            field.setAccessible(true);
-            if (Objects.equals(field.getName(), "id")) {
-                try {
-                    field.set(player, value);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+    public static Event createOverlappingEvent() {
+        var startDate = START_DATE.plusMinutes(30);
+        var endDate = END_DATE.plusMinutes(30);
+        return new Event("FUTEBOL", "description", CAPACITY, startDate, endDate, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(new Tag("SOCCER")), createPlayer());
+    }
+
+    public static Event createNonOverlappingEvent() {
+        var startDate = ZonedDateTime.now().plusHours(2);
+        var endDate = ZonedDateTime.now().plusHours(4);
+        return new Event("FUTEBOL", "description", CAPACITY, startDate, endDate, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(new Tag("SOCCER")), createPlayer());
+    }
+
+    public static Player createPlayerToSave() {
+        return new Player("name", "avatar", 10F, 20F, RADIUS, LocalDate.of(1999, 1, 1));
     }
 }

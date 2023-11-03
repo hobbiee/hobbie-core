@@ -8,7 +8,10 @@ import lombok.Getter;
 import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -78,10 +81,6 @@ public class Event {
 
     public boolean capacityReached() {
         return participants.size() == capacity;
-    }
-
-    public List<Player> getParticipants() {
-        return List.copyOf(participants);
     }
 
     public boolean isOwner(Player player) {
@@ -160,7 +159,11 @@ public class Event {
         return Collections.unmodifiableCollection(categories);
     }
 
-    public void beeingRequested(JoinRequest joinRequest) {
+    public void newJoinRequest(JoinRequest joinRequest) {
         requests.add(joinRequest);
+    }
+
+    public boolean isParticipant(Player player) {
+        return participants.contains(player);
     }
 }
