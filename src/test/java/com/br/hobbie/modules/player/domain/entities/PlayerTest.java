@@ -17,8 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 @ExtendWith(MockitoExtension.class)
 class PlayerTest {
     static final ZonedDateTime START_DATE = ZonedDateTime.now();
@@ -178,10 +176,12 @@ class PlayerTest {
         participant.sendInterest(event);
 
 
-        // WHEN / THEN
-        assertThatThrownBy(() -> participant.rejectJoinRequest(participant, event))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Player must be the admin of the event");
+        // WHEN
+        Either<RuntimeException, Boolean> result = participant.rejectJoinRequest(participant, event);
+
+        // THEN
+        Assertions.assertTrue(result.isLeft());
+        Assertions.assertEquals("Player must be the admin of the event", result.getLeft().getMessage());
     }
 
     @Test
@@ -192,13 +192,14 @@ class PlayerTest {
         participant.sendInterest(event);
 
         // WHEN
-        player.rejectJoinRequest(participant, event);
+        Either<RuntimeException, Boolean> result = player.rejectJoinRequest(participant, event);
         Set<JoinRequest> requests = PlayerEventTestUtils.extractSomeField(Event.class, "requests", event, Set.class);
 
         // THEN
         Assertions.assertEquals(1, event.getAmountOfParticipants());
         Assertions.assertTrue(requests.stream().anyMatch(request -> request.isFrom(participant)));
         Assertions.assertTrue(requests.stream().anyMatch(JoinRequest::isRejected));
+        Assertions.assertTrue(result.isRight());
     }
 
     @Test
