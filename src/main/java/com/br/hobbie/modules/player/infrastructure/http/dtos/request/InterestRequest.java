@@ -7,7 +7,6 @@ import com.br.hobbie.shared.core.errors.Either;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import org.springframework.util.Assert;
 
 public record InterestRequest(
         @NotNull
@@ -23,8 +22,9 @@ public record InterestRequest(
         var event = manager.find(Event.class, eventId);
         var player = manager.find(Player.class, playerId);
 
-        Assert.state(event != null, "Something went wrong, maybe the entered event does not exist");
-        Assert.state(player != null, "Something went wrong, maybe the entered player does not exist");
+        if (event == null || player == null) {
+            return Either.left(new IllegalStateException("Something went wrong, maybe the entered event or player does not exist"));
+        }
 
         return player.sendInterest(event);
     }
