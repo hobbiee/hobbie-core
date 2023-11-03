@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.ContentResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.result.StatusResultMatchers;
 
@@ -54,5 +55,23 @@ public class CustomMockMvc {
 
     public StatusResultMatchers status() {
         return MockMvcResultMatchers.status();
+    }
+
+    public ResultActions put(String url, Map<String, Object> form) {
+        try {
+            String payload = new ObjectMapper()
+                    .writeValueAsString(form);
+            MockHttpServletRequestBuilder content = MockMvcRequestBuilders
+                    .put(url)
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .content(payload);
+            return mockMvc.perform(content);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ContentResultMatchers body() {
+        return MockMvcResultMatchers.content();
     }
 }
