@@ -103,8 +103,7 @@ public class Player {
     }
 
     public Either<RuntimeException, Boolean> acceptJoinRequest(Player joiningParticipant, Event event) {
-        Assert.isTrue(event.isOwner(this), "Player must be the admin of the event");
-        Assert.isTrue(adminEvents.contains(event), "Player must be the admin of the event");
+        if (!event.isOwner(this)) return Either.left(new RuntimeException("Player must be the admin of the event"));
 
         if (event.hasJoinRequestFrom(joiningParticipant)) {
             event.acceptJoinRequest(joiningParticipant);

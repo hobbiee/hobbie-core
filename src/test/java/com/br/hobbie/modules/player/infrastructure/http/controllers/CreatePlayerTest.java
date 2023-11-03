@@ -58,10 +58,9 @@ class CreatePlayerTest {
         var result = mvc.post(URL, params);
 
         // THEN
-        result.andExpect(mvc.status().isBadRequest());
-        result.andExpect(mvc.status().is(HttpStatus.BAD_REQUEST.value()));
-        MockMvcResultMatchers.jsonPath("$.errors").exists();
-        MockMvcResultMatchers.jsonPath("$.errors").isNotEmpty();
+        result
+                .andExpect(mvc.status().isBadRequest())
+                .andExpect(mvc.status().is(HttpStatus.BAD_REQUEST.value()));
     }
 
 

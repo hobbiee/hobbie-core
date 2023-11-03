@@ -162,10 +162,12 @@ class PlayerTest {
         participant.sendInterest(event);
 
 
-        // WHEN / THEN
-        assertThatThrownBy(() -> participant.acceptJoinRequest(participant, event))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Player must be the admin of the event");
+        // WHEN
+        Either<RuntimeException, Boolean> result = participant.acceptJoinRequest(participant, event);
+
+        // THEN
+        Assertions.assertTrue(result.isLeft());
+        Assertions.assertEquals("Player must be the admin of the event", result.getLeft().getMessage());
     }
 
     @Test
