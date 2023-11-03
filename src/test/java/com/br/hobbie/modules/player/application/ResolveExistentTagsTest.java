@@ -15,7 +15,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ExtendWith(SpringExtension.class)
@@ -68,18 +67,20 @@ class ResolveExistentTagsTest {
         player = PlayerEventTestFactory.createParticipant();
         Stream.of(soccer, football, basketball).forEach(player::addInterest);
         events = PlayerEventTestFactory.createManyEvents();
+
         var expected = events.stream()
-                .filter(this::playerDoesNotHaveInterestOnCategories)
-                .collect(Collectors.toSet())
-                .size();
+                .mapToInt(event -> event.getCategories().stream().reduce(0, (acc, tag) -> {
+                    if (player.notInterestedIn(tag)) {
+                        return acc + 1;
+                    }
+                    return acc;
+                }, Integer::sum)).sum();
 
 
         // when
         var tags = resolveExistentTags.extractDistinctTags(events, player);
-        Assertions.assertEquals(expected, tags.size());
-    }
 
-    private boolean playerDoesNotHaveInterestOnCategories(Event event) {
-        return event.getCategories().stream().anyMatch(tag -> player.notInterestedIn(tag));
+        // then
+        Assertions.assertEquals(expected, tags.size());
     }
 }
