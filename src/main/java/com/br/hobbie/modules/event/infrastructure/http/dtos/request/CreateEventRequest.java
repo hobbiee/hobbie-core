@@ -11,7 +11,6 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Optional;
@@ -42,12 +41,12 @@ public class CreateEventRequest implements ZonedDateTimeRequest {
     @NotNull
     @DecimalMin("-90.0")
     @DecimalMax("90.0")
-    private BigDecimal latitude;
+    private Float latitude;
 
     @NotNull
     @DecimalMin("-180.0")
     @DecimalMax("180.0")
-    private BigDecimal longitude;
+    private Float longitude;
 
     private String thumbnail;
 

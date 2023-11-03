@@ -7,16 +7,20 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Event {
     @OneToMany(mappedBy = "event")
     private final Set<JoinRequest> requests = new LinkedHashSet<>();
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    private final Set<Tag> categories;
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -24,17 +28,18 @@ public class Event {
     private String name;
     @Getter
     private String description;
+    @Getter
     private int capacity;
     private ZonedDateTime startDate;
     private ZonedDateTime endDate;
-    private BigDecimal latitude;
-    private BigDecimal longitude;
+    @Getter
+    private Float latitude;
+    @Getter
+    private Float longitude;
+    @Getter
     private String thumbnail;
     @Getter
     private boolean active = true;
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    private Set<Tag> categories = new LinkedHashSet<>();
-
     @Getter
     @ManyToOne
     private Player admin;
@@ -45,9 +50,10 @@ public class Event {
 
     @Deprecated(since = "JPA only")
     protected Event() {
+        categories = Collections.emptySet();
     }
 
-    public Event(String name, String description, int capacity, ZonedDateTime startDate, ZonedDateTime endDate, BigDecimal latitude, BigDecimal longitude, String thumbnail, Set<Tag> categories, Player admin) {
+    public Event(String name, String description, int capacity, ZonedDateTime startDate, ZonedDateTime endDate, Float latitude, Float longitude, String thumbnail, Set<Tag> categories, Player admin) {
         this.name = name;
         this.description = description;
         this.capacity = capacity;
@@ -76,10 +82,6 @@ public class Event {
 
     public boolean capacityReached() {
         return participants.size() == capacity;
-    }
-
-    public List<Player> getParticipants() {
-        return List.copyOf(participants);
     }
 
     public boolean isOwner(Player player) {
@@ -118,5 +120,55 @@ public class Event {
                 .filter(joinRequest -> joinRequest.isFrom(joiningPlayer))
                 .findFirst()
                 .ifPresent(JoinRequest::reject);
+    }
+
+    public String getAdminName() {
+        return admin.getName();
+    }
+
+    public String getAdminAvatar() {
+        return admin.getAvatar();
+    }
+
+    public String[] getCategoriesNames() {
+        return categories.stream().map(Tag::getName).toArray(String[]::new);
+    }
+
+    public int getAmountOfParticipants() {
+        return participants.size();
+    }
+
+    public String getFormattedDate() {
+        return startDate.getDayOfMonth() + "/" + startDate.getMonthValue() + "/" + startDate.getYear();
+    }
+
+    public String getFormattedStartTime() {
+        return startDate.getHour() + ":" + startDate.getMinute();
+    }
+
+    public String getFormattedEndTime() {
+        return endDate.getHour() + ":" + endDate.getMinute();
+    }
+
+    public Set<Tag> distinctTagsFrom(Player player) {
+        return categories.stream()
+                .filter(player::notInterestedIn)
+                .collect(Collectors.toSet());
+    }
+
+    public Collection<Tag> getCategories() {
+        return Collections.unmodifiableCollection(categories);
+    }
+
+    public void newJoinRequest(JoinRequest joinRequest) {
+        requests.add(joinRequest);
+    }
+
+    public boolean isParticipant(Player player) {
+        return participants.contains(player);
+    }
+
+    public boolean hasPendingOrAcceptedJoinRequestFrom(Player player) {
+        return requests.stream().anyMatch(request -> request.isPendingAndFrom(player) || request.isAcceptedAndFrom(player));
     }
 }

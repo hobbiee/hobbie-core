@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class ExpireJoinRequests {
+public class ExpireJoinRequests implements RequestExpiration {
 
     private final EntityManager manager;
 

@@ -4,6 +4,7 @@ import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
 import com.br.hobbie.shared.core.ports.ExistentTagsResolver;
 import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -19,11 +20,15 @@ public record CreatePlayerRequest(
         @NotNull(message = "Latitude is required")
         @DecimalMin("-90.0")
         @DecimalMax("90.0")
-        Long latitude,
+        Float latitude,
         @NotNull(message = "Longitude is required")
         @DecimalMin("-180.0")
         @DecimalMax("180.0")
-        Long longitude,
+        Float longitude,
+
+        @NotNull
+        @Range(min = 250, max = 15000, message = "Radius must be between 250 and 15000 meters") // 15km
+        BigDecimal radius,
 
         @NotNull(message = "Birth date is required")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -40,8 +45,9 @@ public record CreatePlayerRequest(
         var player = new Player(
                 name,
                 avatar,
-                BigDecimal.valueOf(latitude),
-                BigDecimal.valueOf(longitude),
+                latitude,
+                longitude,
+                radius,
                 birthDate
         );
 

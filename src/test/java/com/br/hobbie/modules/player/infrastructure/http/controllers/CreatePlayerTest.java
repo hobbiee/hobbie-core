@@ -29,6 +29,7 @@ class CreatePlayerTest {
                 "avatar", "https://www.google.com",
                 "latitude", 10,
                 "longitude", 10,
+                "radius", 400,
                 "birthDate", "1990-01-01",
                 "interests", new String[]{"FOOTBALL", "MUSIC"}
         );
@@ -57,10 +58,9 @@ class CreatePlayerTest {
         var result = mvc.post(URL, params);
 
         // THEN
-        result.andExpect(mvc.status().isBadRequest());
-        result.andExpect(mvc.status().is(HttpStatus.BAD_REQUEST.value()));
-        MockMvcResultMatchers.jsonPath("$.errors").exists();
-        MockMvcResultMatchers.jsonPath("$.errors").isNotEmpty();
+        result
+                .andExpect(mvc.status().isBadRequest())
+                .andExpect(mvc.status().is(HttpStatus.BAD_REQUEST.value()));
     }
 
 
@@ -73,6 +73,7 @@ class CreatePlayerTest {
                 "avatar", "https://www.google.com",
                 "latitude", 10,
                 "longitude", 10,
+                "radius", 100,
                 "birthDate", "1990-01-01",
                 "interests", new String[]{}
         );

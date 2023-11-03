@@ -3,12 +3,12 @@ package com.br.hobbie.modules.player.infrastructure.http.controllers;
 import com.br.hobbie.modules.event.domain.repositories.EventRepository;
 import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.infrastructure.http.dtos.request.RejectJoinRequestForm;
+import com.br.hobbie.shared.core.errors.Either;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +28,11 @@ public class RejectJoinRequest {
         var admin = manager.find(Player.class, form.adminId());
         var joiningPlayer = manager.find(Player.class, form.playerToRejectId());
 
-        Assert.notNull(admin, "Check if you are passing the correct admin id");
-        Assert.notNull(joiningPlayer, "Check if you are passing the correct player to reject id");
+        if (admin == null)
+            return ResponseEntity.unprocessableEntity().body("Check if you are passing the correct admin id");
+
+        if (joiningPlayer == null)
+            return ResponseEntity.unprocessableEntity().body("Check if you are passing the correct player to reject id");
 
         var event = eventRepository.findById(form.eventId());
 
@@ -37,7 +40,12 @@ public class RejectJoinRequest {
             return ResponseEntity.unprocessableEntity().body("Check if you are passing the correct event id");
         }
 
-        admin.rejectJoinRequest(joiningPlayer, event.get());
+        Either<RuntimeException, Boolean> result = admin.rejectJoinRequest(joiningPlayer, event.get());
+
+        if (result.isLeft()) {
+            return ResponseEntity.unprocessableEntity().body(result.getLeft().getMessage());
+        }
+
         return ResponseEntity.ok().build();
     }
 }
