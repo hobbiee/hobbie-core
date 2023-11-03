@@ -18,7 +18,7 @@ public interface EventRepository extends CrudRepository<Event, Long> {
     Collection<Event> findAllMatchingWithInterests(Long playerId);
 
     @Query("""
-                select e from Event e join e.categories c where c.name in :categoriesNames and e.active = true and e.admin.id != :playerId
+                select e from Event e join e.categories c where c.name in :categoriesNames and e.active = true and e.admin.id != :playerId and e.startDate > current_date
             """)
     Collection<Event> findAllByCategoriesNamesContainingIgnoreCase(Collection<String> categoriesNames, Long playerId);
 }
