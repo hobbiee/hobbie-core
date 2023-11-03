@@ -227,4 +227,48 @@ class FindEventsMatchingWithInterestsTest {
             }
         });
     }
+
+    @Test
+    @DisplayName("Should remove events which player has a pending or accepted join request")
+    void shouldRemoveEventsWhichPlayerHasPendingOrAcceptedJoinRequest() throws Exception {
+        // GIVEN
+        tags.forEach(tag -> participant.addInterest(tag));
+        participant = playerRepository.save(participant);
+        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", new HashSet<>((Collection<Tag>) tags), admin);
+        manager.persist(event);
+        URL += participant.getId();
+
+        // WHEN
+        participant.sendInterest(event);
+        manager.refresh(participant);
+        var response = mvc.get(URL);
+
+        // THEN
+        response
+                .andExpect(mvc.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should remove events which player is already participating")
+    void shouldRemoveEventsWhichPlayerIsAlreadyParticipating() throws Exception {
+        // GIVEN
+        tags.forEach(tag -> participant.addInterest(tag));
+        participant = playerRepository.save(participant);
+        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", new HashSet<>((Collection<Tag>) tags), admin);
+        manager.persist(event);
+        URL += participant.getId();
+
+        // WHEN
+        event.addParticipant(participant);
+        manager.flush();
+        var response = mvc.get(URL);
+
+        // THEN
+        response
+                .andExpect(mvc.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").isEmpty());
+    }
 }

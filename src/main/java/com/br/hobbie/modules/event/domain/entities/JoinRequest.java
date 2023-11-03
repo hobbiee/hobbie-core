@@ -70,4 +70,12 @@ public class JoinRequest {
     public boolean isAccepted() {
         return status == RequestStatus.ACCEPTED;
     }
+
+    public boolean isPendingAndFrom(Player player) {
+        return status == RequestStatus.PENDING && isFrom(player);
+    }
+
+    public boolean isAcceptedAndFrom(Player player) {
+        return status == RequestStatus.ACCEPTED && isFrom(player);
+    }
 }

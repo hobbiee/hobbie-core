@@ -168,4 +168,7 @@ public class Event {
         return participants.contains(player);
     }
 
+    public boolean hasPendingOrAcceptedJoinRequestFrom(Player player) {
+        return requests.stream().anyMatch(request -> request.isPendingAndFrom(player) || request.isAcceptedAndFrom(player));
+    }
 }

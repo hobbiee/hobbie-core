@@ -51,6 +51,8 @@ public class FindEventsMatchingWithInterests {
 
         events.addAll(possibleRecommendations);
 
+        events.removeIf(event -> event.hasPendingOrAcceptedJoinRequestFrom(player) || event.isParticipant(player));
+
         return ResponseEntity.ok(events.stream().map(event -> EventResponse.from(event, player, distanceCalculator)).collect(Collectors.toSet()));
     }
 
