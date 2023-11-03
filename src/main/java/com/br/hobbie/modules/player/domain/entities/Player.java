@@ -24,7 +24,7 @@ public class Player {
     private final Set<Tag> interests = new HashSet<>();
     @Getter
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Getter
     private String name;
@@ -140,7 +140,7 @@ public class Player {
     }
 
     public boolean notInterestedIn(Tag tag) {
-        return interests.stream().anyMatch(interest -> interest.isSameOf(tag));
+        return interests.stream().noneMatch(interest -> interest.isSameOf(tag));
     }
 
     public boolean hasInterestIn(Tag tag) {
