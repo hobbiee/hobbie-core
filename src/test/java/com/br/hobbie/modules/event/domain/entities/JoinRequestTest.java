@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 
+import static com.br.hobbie.shared.factory.PlayerEventTestFactory.PLAYER_INTERESTS;
+
 @ExtendWith(MockitoExtension.class)
 class JoinRequestTest {
 
@@ -45,6 +47,7 @@ class JoinRequestTest {
     void shouldReturnFalseWhenTheJoinRequestIsNotFromThePlayer() {
         // GIVEN
         Player player = PlayerEventTestFactory.createPlayerToSave();
+        PLAYER_INTERESTS.forEach(player::addInterest);
         PlayerEventTestUtils.assignId(player, 4L);
 
         // WHEN

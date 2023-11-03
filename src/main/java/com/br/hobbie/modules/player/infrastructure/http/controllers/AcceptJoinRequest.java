@@ -10,7 +10,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,8 +36,11 @@ public class AcceptJoinRequest {
         var playerWhoIsAccepting = manager.find(Player.class, form.adminId());
         var playerWhoIsBeingAccepted = manager.find(Player.class, form.playerToAcceptId());
 
-        Assert.state(playerWhoIsAccepting != null, "Something went wrong, maybe the entered player who is accepting does not exist");
-        Assert.state(playerWhoIsBeingAccepted != null, "Something went wrong, maybe the entered player who is being accepted does not exist");
+        if (playerWhoIsAccepting == null)
+            return ResponseEntity.unprocessableEntity().body("Something went wrong, maybe the entered player who is accepting does not exist");
+
+        if (playerWhoIsBeingAccepted == null)
+            return ResponseEntity.unprocessableEntity().body("Something went wrong, maybe the entered player who is being accepted does not exist");
 
         return eventRepository.findById(form.eventId()).map(event -> {
             Either<RuntimeException, Boolean> acceptedOrError = playerWhoIsAccepting.acceptJoinRequest(playerWhoIsBeingAccepted, event);
@@ -46,8 +48,8 @@ public class AcceptJoinRequest {
             if (acceptedOrError.isLeft())
                 return ResponseEntity.unprocessableEntity().body(acceptedOrError.getLeft().getMessage());
 
-            manager.merge(playerWhoIsBeingAccepted);
-            manager.merge(playerWhoIsAccepting);
+            manager.refresh(playerWhoIsBeingAccepted);
+            manager.refresh(playerWhoIsAccepting);
             manager.flush();
             return ResponseEntity.ok().build();
         }).orElse(ResponseEntity.unprocessableEntity().body("Something went wrong, maybe the entered event does not exist"));
