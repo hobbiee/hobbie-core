@@ -5,6 +5,7 @@ import com.br.hobbie.modules.event.domain.entities.Event;
 import com.br.hobbie.modules.event.domain.entities.JoinRequest;
 import com.br.hobbie.shared.core.errors.Either;
 import com.br.hobbie.shared.factory.PlayerEventTestFactory;
+import com.br.hobbie.shared.utils.PlayerEventTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -33,15 +33,6 @@ class PlayerTest {
     private Player player;
     private Event event;
 
-    static <T> T extractSomeField(Class<?> clazz, String fieldName, Object instance, Class<T> type) {
-        try {
-            Field field = clazz.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return type.cast(field.get(instance));
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @BeforeEach
     void setUp() {
@@ -200,7 +191,7 @@ class PlayerTest {
 
         // WHEN
         player.rejectJoinRequest(participant, event);
-        Set<JoinRequest> requests = extractSomeField(Event.class, "requests", event, Set.class);
+        Set<JoinRequest> requests = PlayerEventTestUtils.extractSomeField(Event.class, "requests", event, Set.class);
 
         // THEN
         Assertions.assertEquals(1, event.getAmountOfParticipants());
@@ -216,7 +207,7 @@ class PlayerTest {
 
         // WHEN
         player.rejectJoinRequest(participant, event);
-        var requests = extractSomeField(Event.class, "requests", event, Set.class);
+        var requests = PlayerEventTestUtils.extractSomeField(Event.class, "requests", event, Set.class);
 
         // THEN
         Assertions.assertEquals(1, event.getAmountOfParticipants());
