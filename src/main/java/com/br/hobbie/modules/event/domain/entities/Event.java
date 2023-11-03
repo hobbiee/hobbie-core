@@ -20,6 +20,7 @@ public class Event {
     private final Set<JoinRequest> requests = new LinkedHashSet<>();
     @ManyToMany(cascade = CascadeType.PERSIST)
     private final Set<Tag> categories;
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -166,4 +167,5 @@ public class Event {
     public boolean isParticipant(Player player) {
         return participants.contains(player);
     }
+
 }
