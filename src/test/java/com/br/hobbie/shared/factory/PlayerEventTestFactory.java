@@ -13,26 +13,19 @@ import java.util.Set;
 
 public class PlayerEventTestFactory {
 
+    public static final Set<Tag> PLAYER_INTERESTS = Set.of(new Tag("SOCCER"), new Tag("BEACH SOCCER"));
     static final ZonedDateTime DATE_TOMORROW = ZonedDateTime.now().plusDays(1);
     static final ZonedDateTime START_DATE = ZonedDateTime.now().plusDays(1);
     static final ZonedDateTime END_DATE = ZonedDateTime.now().plusDays(2);
     static final Float LATITUDE = 10F;
     static final Float LONGITUDE = 10F;
-
     static final Float VALID_PLAYER_LATITUDE = -20.298711F;
     static final Float VALID_PLAYER_LONGITUDE = -40.298711F;
-
     static final Float VALID_EVENT_LATITUDE = -20.298692F;
     static final Float VALID_EVENT_LONGITUDE = -40.291370F;
-
     static final BigDecimal RADIUS = BigDecimal.valueOf(400);
-
     static final int CAPACITY = 10;
-
     static final Set<Tag> TAGS = Set.of(new Tag("tag1"), new Tag("tag2"));
-
-    static final Set<Tag> PLAYER_INTERESTS = Set.of(new Tag("SOCCER"), new Tag("BEACH SOCCER"));
-
     private Player player;
     private Event event;
 
@@ -103,6 +96,17 @@ public class PlayerEventTestFactory {
     }
 
     public static Player createPlayerToSave() {
-        return new Player("name", "avatar", 10F, 20F, RADIUS, LocalDate.of(1999, 1, 1));
+        return new Player("name", "avatar", VALID_PLAYER_LATITUDE, VALID_PLAYER_LONGITUDE, RADIUS, LocalDate.of(1999, 1, 1));
+    }
+
+    public static Player createParticipantPlayerToSave() {
+        var player = new Player("John Doe", "PARTICIPANT", VALID_PLAYER_LATITUDE, VALID_PLAYER_LONGITUDE, RADIUS, LocalDate.of(1999, 1, 1));
+        Set.of(new Tag("BASKETBALL"), new Tag("BEACH SOCCER")).forEach(player::addInterest);
+        return player;
+    }
+
+    public static Event createEventToSave(Player admin) {
+        var tags = Set.of(new Tag("SOCCER"), new Tag("BEACH SOCCER"));
+        return new Event("BEACH SOCCER", "description", CAPACITY, START_DATE, END_DATE, -50.42422F, -30.424252F, "thumbnail", tags, admin);
     }
 }
