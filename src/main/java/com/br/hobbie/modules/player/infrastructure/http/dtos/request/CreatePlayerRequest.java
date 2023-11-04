@@ -3,19 +3,22 @@ package com.br.hobbie.modules.player.infrastructure.http.dtos.request;
 import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
 import com.br.hobbie.shared.core.ports.ExistentTagsResolver;
+import com.br.hobbie.shared.core.ports.FileUploader;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 public record CreatePlayerRequest(
         @NotBlank(message = "Name is required")
         String name,
-        String avatar,
+        MultipartFile avatar,
 
         @NotNull(message = "Latitude is required")
         @DecimalMin("-90.0")
@@ -41,10 +44,14 @@ public record CreatePlayerRequest(
 ) {
 
 
-    public Player toEntity(ExistentTagsResolver resolver) {
+    public Player toEntity(ExistentTagsResolver resolver, FileUploader uploader) {
+        var avatarLink = Optional.ofNullable(avatar)
+                .map(uploader::uploadFile)
+                .orElse("");
+
         var player = new Player(
                 name,
-                avatar,
+                avatarLink,
                 latitude,
                 longitude,
                 radius,
