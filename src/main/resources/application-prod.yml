@@ -1,0 +1,21 @@
+spring:
+  config:
+    import: optional:classpath:.env.prod.properties
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+amazon:
+  s3:
+    access-key: ${AMAZON_S3_ACCESS_KEY}
+    secret-key: ${AMAZON_S3_SECRET_KEY}
+    bucket-name: ${AMAZON_S3_BUCKET_NAME}
+    region: ${AMAZON_S3_REGION}

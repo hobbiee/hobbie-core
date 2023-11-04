@@ -1,1 +1,19 @@
-{ "properties": [ ] }
+{
+  "properties": [
+    {
+      "name": "amazon.s3.access-key",
+      "type": "java.lang.String",
+      "description": "Access key for Amazon S3."
+    },
+    {
+      "name": "amazon.s3.secret-key",
+      "type": "java.lang.String",
+      "description": "Secret key for Amazon S3."
+    },
+    {
+      "name": "amazon.s3.region",
+      "type": "java.lang.String",
+      "description": "Region for Amazon S3. Example: us-east-1."
+    }
+  ]
+}
