@@ -1,4 +1,4 @@
-package com.br.hobbie.modules.player.adapters;
+package com.br.hobbie.shared.core.adapters;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;

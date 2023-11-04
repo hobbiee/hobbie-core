@@ -1,4 +1,4 @@
-package com.br.hobbie.modules.player.adapters;
+package com.br.hobbie.shared.core.adapters;
 
 import com.br.hobbie.shared.core.ports.FileUploader;
 import lombok.extern.slf4j.Slf4j;
