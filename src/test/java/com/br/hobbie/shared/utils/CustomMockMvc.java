@@ -3,6 +3,7 @@ package com.br.hobbie.shared.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -73,5 +74,18 @@ public class CustomMockMvc {
 
     public ContentResultMatchers body() {
         return MockMvcResultMatchers.content();
+    }
+
+    public ResultActions multipart(String url, MockMultipartFile file, Map<String, Object> params) {
+        try {
+            MockHttpServletRequestBuilder content = MockMvcRequestBuilders
+                    .multipart(url)
+                    .file(file)
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                    .content(params.toString());
+            return mockMvc.perform(content);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
