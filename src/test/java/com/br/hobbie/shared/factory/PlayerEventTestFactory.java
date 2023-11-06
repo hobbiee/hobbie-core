@@ -43,28 +43,28 @@ public class PlayerEventTestFactory {
 
     public static Event createEvent() {
         Player player = createPlayer();
-        return new Event("name", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_PLAYER_LONGITUDE, "thumbnail", TAGS, player);
+        return new Event("name", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_PLAYER_LONGITUDE, TAGS, player);
     }
 
     public static Event createStartedEvent(Player admin) {
         var startDate = ZonedDateTime.now().minusMinutes(5);
         var endDate = ZonedDateTime.now().plusHours(1);
-        return new Event("name", "description", CAPACITY, startDate, endDate, LATITUDE, LONGITUDE, "thumbnail", TAGS, admin);
+        return new Event("name", "description", CAPACITY, startDate, endDate, LATITUDE, LONGITUDE, TAGS, admin);
     }
 
     public static Set<Event> createManyEvents() {
         return Set.of(
-                new Event("FUTEBOL", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(new Tag("SOCCER")), createPlayer()),
+                new Event("FUTEBOL", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, Set.of(new Tag("SOCCER")), createPlayer()),
 
 
-                new Event("BASQUETE", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(new Tag("BASKETBALL"), new Tag("VOLLEYBALL")), createPlayer()),
+                new Event("BASQUETE", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, Set.of(new Tag("BASKETBALL"), new Tag("VOLLEYBALL")), createPlayer()),
 
 
-                new Event("TENIS", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(new Tag("BEACH SOCCER"), new Tag("TENNIS")), createPlayer()),
+                new Event("TENIS", "description", CAPACITY, START_DATE, END_DATE, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, Set.of(new Tag("BEACH SOCCER"), new Tag("TENNIS")), createPlayer()),
 
-                new Event("HÓQUEI", "description", CAPACITY, START_DATE, END_DATE, 90F, -80F, "thumbnail", Set.of(new Tag("HOQUEI")), createParticipant()),
+                new Event("HÓQUEI", "description", CAPACITY, START_DATE, END_DATE, 90F, -80F, Set.of(new Tag("HOQUEI")), createParticipant()),
 
-                new Event("BEACH SOCCER", "description", CAPACITY, START_DATE, END_DATE, -50.42422F, -30.424252F, "thumbnail", TAGS, createPlayer())
+                new Event("BEACH SOCCER", "description", CAPACITY, START_DATE, END_DATE, -50.42422F, -30.424252F, TAGS, createPlayer())
         );
     }
 
@@ -85,13 +85,13 @@ public class PlayerEventTestFactory {
     public static Event createOverlappingEvent() {
         var startDate = START_DATE.plusMinutes(30);
         var endDate = END_DATE.plusMinutes(30);
-        return new Event("FUTEBOL", "description", CAPACITY, startDate, endDate, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(new Tag("SOCCER")), createPlayer());
+        return new Event("FUTEBOL", "description", CAPACITY, startDate, endDate, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, Set.of(new Tag("SOCCER")), createPlayer());
     }
 
     public static Event createNonOverlappingEvent() {
         var startDate = ZonedDateTime.now().plusHours(2);
         var endDate = ZonedDateTime.now().plusHours(4);
-        return new Event("FUTEBOL", "description", CAPACITY, startDate, endDate, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(new Tag("SOCCER")), createPlayer());
+        return new Event("FUTEBOL", "description", CAPACITY, startDate, endDate, VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, Set.of(new Tag("SOCCER")), createPlayer());
     }
 
     public static Player createPlayerToSave() {
@@ -106,6 +106,6 @@ public class PlayerEventTestFactory {
 
     public static Event createEventToSave(Player admin) {
         var tags = Set.of(new Tag("SOCCER"), new Tag("BEACH SOCCER"));
-        return new Event("BEACH SOCCER", "description", CAPACITY, START_DATE, END_DATE, -50.42422F, -30.424252F, "thumbnail", tags, admin);
+        return new Event("BEACH SOCCER", "description", CAPACITY, START_DATE, END_DATE, -50.42422F, -30.424252F, tags, admin);
     }
 }

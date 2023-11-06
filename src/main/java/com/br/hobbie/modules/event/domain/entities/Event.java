@@ -53,7 +53,7 @@ public class Event {
         categories = Collections.emptySet();
     }
 
-    public Event(String name, String description, int capacity, ZonedDateTime startDate, ZonedDateTime endDate, Float latitude, Float longitude, String thumbnail, Set<Tag> categories, Player admin) {
+    public Event(String name, String description, int capacity, ZonedDateTime startDate, ZonedDateTime endDate, Float latitude, Float longitude, Set<Tag> categories, Player admin) {
         this.name = name;
         this.description = description;
         this.capacity = capacity;
@@ -61,7 +61,6 @@ public class Event {
         this.endDate = endDate;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.thumbnail = thumbnail;
         this.categories = categories;
         this.admin = admin;
         this.admin.createEvent(this);
@@ -170,5 +169,9 @@ public class Event {
 
     public boolean hasPendingOrAcceptedJoinRequestFrom(Player player) {
         return requests.stream().anyMatch(request -> request.isPendingAndFrom(player) || request.isAcceptedAndFrom(player));
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 }
