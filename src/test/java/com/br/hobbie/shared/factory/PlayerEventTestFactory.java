@@ -78,7 +78,6 @@ public class PlayerEventTestFactory {
                 "endDate", END_DATE.toString(),
                 "latitude", LATITUDE,
                 "longitude", LONGITUDE,
-                "thumbnail", "thumbnail",
                 "categories", Set.of("tag1", "tag2").toArray()
         );
     }

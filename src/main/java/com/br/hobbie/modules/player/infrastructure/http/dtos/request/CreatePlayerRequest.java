@@ -19,7 +19,6 @@ public record CreatePlayerRequest(
         @NotBlank(message = "Name is required")
         String name,
         MultipartFile avatar,
-
         @NotNull(message = "Latitude is required")
         @DecimalMin("-90.0")
         @DecimalMax("90.0")

@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.ContentResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.result.StatusResultMatchers;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
 
@@ -76,14 +77,25 @@ public class CustomMockMvc {
         return MockMvcResultMatchers.content();
     }
 
-    public ResultActions multipart(String url, MockMultipartFile file, Map<String, Object> params) {
+    public ResultActions multipart(String url, MockMultipartFile file, MultiValueMap<String, String> params) {
         try {
-            MockHttpServletRequestBuilder content = MockMvcRequestBuilders
+            String payload = new ObjectMapper()
+                    .writeValueAsString(params);
+
+            return mockMvc.perform(MockMvcRequestBuilders
                     .multipart(url)
                     .file(file)
-                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                    .content(params.toString());
-            return mockMvc.perform(content);
+                    .params(params));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ResultActions multipart(String url, MockMultipartFile file) {
+        try {
+            return mockMvc.perform(MockMvcRequestBuilders
+                    .multipart(url)
+                    .file(file));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
