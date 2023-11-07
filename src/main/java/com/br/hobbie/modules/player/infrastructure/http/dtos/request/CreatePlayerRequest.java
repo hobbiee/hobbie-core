@@ -4,6 +4,9 @@ import com.br.hobbie.modules.player.domain.entities.Player;
 import com.br.hobbie.modules.player.domain.entities.Tag;
 import com.br.hobbie.shared.core.ports.ExistentTagsResolver;
 import com.br.hobbie.shared.core.ports.FileUploader;
+import com.br.hobbie.shared.core.validators.FileDimensions;
+import com.br.hobbie.shared.core.validators.FileSize;
+import com.br.hobbie.shared.core.validators.FilesAllowed;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +21,11 @@ import java.util.Optional;
 public record CreatePlayerRequest(
         @NotBlank(message = "Name is required")
         String name,
+        @FilesAllowed(extensions = {"jpg", "jpeg", "png"}, message = "Avatar must be a valid image")
+        @FileDimensions(minWidth = 200, minHeight = 200, message = "Avatar must be at least 200x200 pixels")
+        @FileSize(max = 5 * 1024 * 1024, message = "Avatar must be at most 5MB")
         MultipartFile avatar,
+
         @NotNull(message = "Latitude is required")
         @DecimalMin("-90.0")
         @DecimalMax("90.0")
