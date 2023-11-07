@@ -93,9 +93,14 @@ public class CustomMockMvc {
 
     public ResultActions multipart(String url, MockMultipartFile file) {
         try {
-            return mockMvc.perform(MockMvcRequestBuilders
+            var builder = MockMvcRequestBuilders
                     .multipart(url)
-                    .file(file));
+                    .file(file)
+                    .with(request -> {
+                        request.setMethod("PATCH");
+                        return request;
+                    });
+            return mockMvc.perform(builder);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
