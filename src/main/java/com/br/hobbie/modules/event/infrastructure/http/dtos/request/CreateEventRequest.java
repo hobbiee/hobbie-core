@@ -25,6 +25,7 @@ public class CreateEventRequest implements ZonedDateTimeRequest {
 
     @Positive
     @Min(value = 2)
+    @NotNull
     private Integer capacity;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -48,8 +49,6 @@ public class CreateEventRequest implements ZonedDateTimeRequest {
     @DecimalMax("180.0")
     private Float longitude;
 
-    private String thumbnail;
-
     @NotEmpty
     @Size(min = 1)
     private String[] categories;
@@ -72,7 +71,7 @@ public class CreateEventRequest implements ZonedDateTimeRequest {
                 .toArray(Tag[]::new));
 
 
-        var eventCreated = new Event(name, description, capacity, startDate, endDate, latitude, longitude, thumbnail, tags, playerOptional.get());
+        var eventCreated = new Event(name, description, capacity, startDate, endDate, latitude, longitude, tags, playerOptional.get());
 
         return Either.right(eventCreated);
     }

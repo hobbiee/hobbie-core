@@ -2,7 +2,10 @@ package com.br.hobbie.shared.utils;
 
 import com.br.hobbie.modules.player.domain.entities.Player;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -28,5 +31,22 @@ public class PlayerEventTestUtils {
                 }
             }
         });
+    }
+
+    public static File buildFile() {
+        // get the directory path using System
+        var path = System.getProperty("user.dir") + "/src/test/resources/files";
+        var file = new File(path + "/text.txt");
+        if (!file.exists()) {
+            // creates the file
+            try {
+                Files.createDirectories(file.getParentFile().toPath());
+                Files.createFile(file.toPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return file;
     }
 }

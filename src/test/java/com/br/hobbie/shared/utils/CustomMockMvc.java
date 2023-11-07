@@ -3,6 +3,7 @@ package com.br.hobbie.shared.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -11,6 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.ContentResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.result.StatusResultMatchers;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
 
@@ -73,5 +75,34 @@ public class CustomMockMvc {
 
     public ContentResultMatchers body() {
         return MockMvcResultMatchers.content();
+    }
+
+    public ResultActions multipart(String url, MockMultipartFile file, MultiValueMap<String, String> params) {
+        try {
+            String payload = new ObjectMapper()
+                    .writeValueAsString(params);
+
+            return mockMvc.perform(MockMvcRequestBuilders
+                    .multipart(url)
+                    .file(file)
+                    .params(params));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ResultActions multipart(String url, MockMultipartFile file) {
+        try {
+            var builder = MockMvcRequestBuilders
+                    .multipart(url)
+                    .file(file)
+                    .with(request -> {
+                        request.setMethod("PATCH");
+                        return request;
+                    });
+            return mockMvc.perform(builder);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

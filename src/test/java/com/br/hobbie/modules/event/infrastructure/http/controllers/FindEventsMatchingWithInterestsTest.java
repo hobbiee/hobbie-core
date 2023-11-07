@@ -78,7 +78,7 @@ class FindEventsMatchingWithInterestsTest {
         // GIVEN
         tags.forEach(tag -> participant.addInterest(tag));
         participant = playerRepository.save(participant);
-        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", new HashSet<>((Collection<Tag>) tags), admin);
+        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, new HashSet<>((Collection<Tag>) tags), admin);
         manager.persist(event);
         URL += participant.getId();
         // WHEN
@@ -108,7 +108,7 @@ class FindEventsMatchingWithInterestsTest {
         // GIVEN
         tags.forEach(tag -> participant.addInterest(tag));
         participant = playerRepository.save(participant);
-        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(new Tag("NO MATCH TAGS")), admin);
+        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, Set.of(new Tag("NO MATCH TAGS")), admin);
         manager.persist(event);
         URL += participant.getId();
         // WHEN
@@ -127,7 +127,7 @@ class FindEventsMatchingWithInterestsTest {
         // GIVEN
         tags.forEach(tag -> participant.addInterest(tag));
         participant = playerRepository.save(participant);
-        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), -40.295845F, -80.424213F, "thumbnail", new HashSet<>((Collection<Tag>) tags), admin);
+        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), -40.295845F, -80.424213F, new HashSet<>((Collection<Tag>) tags), admin);
         manager.persist(event);
         URL += participant.getId();
         // WHEN
@@ -153,8 +153,8 @@ class FindEventsMatchingWithInterestsTest {
 
         participant = playerRepository.save(participant);
 
-        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", distinctEventTags, admin);
-        var other = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", Set.of(differentTag), admin);
+        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, distinctEventTags, admin);
+        var other = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, Set.of(differentTag), admin);
 
         manager.persist(event);
         manager.persist(other);
@@ -197,8 +197,8 @@ class FindEventsMatchingWithInterestsTest {
 
         participant = playerRepository.save(participant);
 
-        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", distinctEventTags, admin);
-        var other = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), -50.5353294F, -40.222423F, "thumbnail", Set.of(differentTag), admin);
+        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, distinctEventTags, admin);
+        var other = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), -50.5353294F, -40.222423F, Set.of(differentTag), admin);
 
         manager.persist(event);
         manager.persist(other);
@@ -234,7 +234,7 @@ class FindEventsMatchingWithInterestsTest {
         // GIVEN
         tags.forEach(tag -> participant.addInterest(tag));
         participant = playerRepository.save(participant);
-        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", new HashSet<>((Collection<Tag>) tags), admin);
+        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, new HashSet<>((Collection<Tag>) tags), admin);
         manager.persist(event);
         URL += participant.getId();
 
@@ -256,7 +256,7 @@ class FindEventsMatchingWithInterestsTest {
         // GIVEN
         tags.forEach(tag -> participant.addInterest(tag));
         participant = playerRepository.save(participant);
-        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, "thumbnail", new HashSet<>((Collection<Tag>) tags), admin);
+        var event = new Event("Event name", "Event description", 10, ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2), VALID_EVENT_LATITUDE, VALID_EVENT_LONGITUDE, new HashSet<>((Collection<Tag>) tags), admin);
         manager.persist(event);
         URL += participant.getId();
 

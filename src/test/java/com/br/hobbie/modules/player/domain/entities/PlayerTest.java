@@ -35,7 +35,7 @@ class PlayerTest {
     @BeforeEach
     void setUp() {
         player = PlayerEventTestFactory.createPlayer();
-        event = new Event("name", "description", CAPACITY, START_DATE, END_DATE, LATITUDE, LONGITUDE, "thumbnail", TAGS, player);
+        event = new Event("name", "description", CAPACITY, START_DATE, END_DATE, LATITUDE, LONGITUDE, TAGS, player);
     }
 
     @Test
