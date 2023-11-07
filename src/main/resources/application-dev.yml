@@ -1,0 +1,17 @@
+spring:
+  flyway:
+    enabled: false # Disable Flyway for now. I'm going to enable only in production profile
+  config:
+    import: optional:classpath:.env.properties
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
