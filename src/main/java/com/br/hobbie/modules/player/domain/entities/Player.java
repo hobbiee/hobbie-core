@@ -1,114 +1,155 @@
 package com.br.hobbie.modules.player.domain.entities;
 
 import com.br.hobbie.modules.event.domain.entities.Event;
+import com.br.hobbie.modules.event.domain.entities.JoinRequest;
 import com.br.hobbie.shared.core.errors.Either;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NonNull;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 public class Player {
 
+    @OneToMany(mappedBy = "player", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private final Set<JoinRequest> joinRequests = new LinkedHashSet<>();
     @ManyToMany(cascade = CascadeType.PERSIST)
-    private final Set<Tag> interests = new LinkedHashSet<>();
+    private final Set<Tag> interests = new HashSet<>();
+    @Getter
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Getter
     private String name;
+    @Getter
     private String avatar;
-    private BigDecimal matchLatitude;
-    private BigDecimal matchLongitude;
+
+    /**
+     * <p>
+     * The first 3 attributes below are used to control the matching of players with events based on their location.
+     * </p>
+     */
+    @Getter
+    private Float matchLatitude;
+    @Getter
+    private Float matchLongitude;
+
+    @Getter
+    private BigDecimal radius;
+
     private LocalDate birthDate;
 
     @Getter
-    @OneToOne(mappedBy = "admin")
-    private Event adminEvent;
+    @OneToMany(mappedBy = "admin")
+    private Set<Event> adminEvents = new LinkedHashSet<>();
 
-    @OneToMany
+    @ManyToMany(mappedBy = "participants")
     private Set<Event> participantEvents = new LinkedHashSet<>();
 
     /**
-     * @deprecated (since = " JPA ") Constructor for JPA use only.
+     * @deprecated (since = " JPA ") Constructor for JPA uses only.
      */
     @Deprecated(since = "JPA")
     protected Player() {
     }
 
-    public Player(String name, String avatar, BigDecimal matchLatitude, BigDecimal matchLongitude, LocalDate birthDate) {
+    public Player(String name, String avatar, Float matchLatitude, Float matchLongitude, BigDecimal radius, LocalDate birthDate) {
         this.name = name;
         this.avatar = avatar;
         this.matchLatitude = matchLatitude;
         this.matchLongitude = matchLongitude;
         this.birthDate = birthDate;
+        this.radius = radius;
     }
 
     public void addInterest(Tag tag) {
         interests.add(tag);
     }
 
-    public void addInterests(Tag... tags) {
-        Arrays.stream(tags)
-                .filter(tag -> !interests.contains(tag))
-                .forEach(interests::add);
-    }
 
-    public Set<Tag> getInterests() {
-        return Set.copyOf(interests);
-    }
-
-    public Either<RuntimeException, Void> createEvent(Event event) {
-        if (adminEvent == null) {
-            adminEvent = event;
-            participantEvents.add(adminEvent);
-            return Either.right(null);
-        }
-
-        return Either.left(new RuntimeException("Player already has an event"));
-    }
-
-    public Either<RuntimeException, Boolean> closeEvent() {
-        // if adminEvent is null, then there is no event to close
-        if (adminEvent == null) {
-            return Either.left(new RuntimeException("Player has no event to close"));
-        }
-
-        adminEvent.close(this);
-        participantEvents.remove(adminEvent);
-        adminEvent = null;
-        return Either.right(true);
-    }
-
-    public Either<RuntimeException, Boolean> quitEvent(Event event) {
-        if (adminEvent != null && adminEvent.equals(event)) {
-            return Either.left(new RuntimeException("Admin cannot quit event"));
-        }
-
-        if (!participantEvents.contains(event)) {
-            return Either.left(new RuntimeException("Player is not a participant of this event"));
-        }
-
-        participantEvents.remove(event);
-        return Either.right(true);
-    }
-
-    public List<Event> getParticipantEvents() {
-        // returns a copy of the participant events to remain immutable
-        return List.copyOf(participantEvents);
-    }
-
-
-    public Either<RuntimeException, Boolean> joinEvent(Event event) {
-        if (adminEvent != null && adminEvent.equals(event))
-            return Either.left(new RuntimeException("Player is already admin of this event"));
-
+    public void createEvent(Event event) {
+        Assert.isTrue(event.isOwner(this), "Player must be the admin of the event");
+        adminEvents.add(event);
         participantEvents.add(event);
-        return Either.right(true);
+    }
+
+    public boolean isSameOf(Player player) {
+        Objects.requireNonNull(player.id, "Player id cannot be null");
+        Objects.requireNonNull(id, "Player id cannot be null");
+        return Objects.equals(id, player.id);
+    }
+
+    public Either<IllegalStateException, JoinRequest> sendInterest(@NonNull Event event) {
+        if (event.isOwner(this))
+            return Either.left(new IllegalStateException("Player cannot request participation in his own event"));
+
+        if (!canSendInterest(event)) {
+            return Either.left(new IllegalStateException("Player already has an event at this time"));
+        }
+
+        var participationRequest = new JoinRequest(this, event);
+        joinRequests.add(participationRequest);
+        return Either.right(participationRequest);
+    }
+
+    private boolean canSendInterest(Event event) {
+        return participantEvents.stream().noneMatch(event::overlapsWith);
+    }
+
+    public Either<RuntimeException, Boolean> acceptJoinRequest(Player joiningParticipant, Event event) {
+        if (!event.isOwner(this)) return Either.left(new RuntimeException("Player must be the admin of the event"));
+
+        if (event.hasJoinRequestFrom(joiningParticipant)) {
+            event.acceptJoinRequest(joiningParticipant);
+            return Either.right(true);
+        }
+
+        return Either.left(new RuntimeException("Player must have a join request"));
+    }
+
+    public Either<RuntimeException, Boolean> rejectJoinRequest(Player joiningPlayer, Event event) {
+        if (!event.isOwner(this)) return Either.left(new RuntimeException("Player must be the admin of the event"));
+
+        if (event.hasJoinRequestFrom(joiningPlayer)) {
+            event.rejectJoinRequest(joiningPlayer);
+            return Either.right(true);
+        }
+
+        return Either.left(new RuntimeException("Player must have a join request"));
+    }
+
+    /**
+     * <h2>
+     * Checks if the distance is within the radius of the player
+     * </h2>
+     *
+     * <p>
+     * Both distance parameter and player's radius are and must be in meters
+     * </p>
+     *
+     * @param distance in meters
+     * @return true if the distance is within the radius of the player
+     */
+    public boolean distanceIsWithinRadius(double distance) {
+        return radius.compareTo(BigDecimal.valueOf(distance)) >= 0;
+    }
+
+    public boolean notInterestedIn(Tag tag) {
+        return interests.stream().noneMatch(interest -> interest.isSameOf(tag));
+    }
+
+    public boolean hasInterestIn(Tag tag) {
+        return interests.stream().anyMatch(interest -> interest.isSameOf(tag));
+    }
+
+    public boolean isParticipant(Event event) {
+        return participantEvents.contains(event);
     }
 }

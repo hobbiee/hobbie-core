@@ -33,6 +33,5 @@ build/
 .vscode/
 
 ### Environment ###
-.env
-.env.test
-.env.prod
+.env.properties
+.env.*.properties

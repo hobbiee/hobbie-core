@@ -5,16 +5,22 @@ import com.br.hobbie.modules.player.domain.entities.Tag;
 import com.br.hobbie.shared.core.errors.Either;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.springframework.util.Assert;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Event {
+    @OneToMany(mappedBy = "event")
+    private final Set<JoinRequest> requests = new LinkedHashSet<>();
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    private final Set<Tag> categories;
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -22,42 +28,39 @@ public class Event {
     private String name;
     @Getter
     private String description;
+    @Getter
     private int capacity;
-    private LocalDate date;
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private BigDecimal latitude;
-    private BigDecimal longitude;
+    private ZonedDateTime startDate;
+    private ZonedDateTime endDate;
+    @Getter
+    private Float latitude;
+    @Getter
+    private Float longitude;
+    @Getter
     private String thumbnail;
     @Getter
     private boolean active = true;
-
-
-    @ManyToMany
-    private Set<Tag> categories = new LinkedHashSet<>();
-
     @Getter
-    @OneToOne
+    @ManyToOne
     private Player admin;
 
-    @OneToMany
+    @ManyToMany
     private Set<Player> participants = new LinkedHashSet<>();
 
 
     @Deprecated(since = "JPA only")
     protected Event() {
+        categories = Collections.emptySet();
     }
 
-    public Event(String name, String description, int capacity, LocalDate date, LocalTime startTime, LocalTime endTime, BigDecimal latitude, BigDecimal longitude, String thumbnail, Set<Tag> categories, Player admin) {
+    public Event(String name, String description, int capacity, ZonedDateTime startDate, ZonedDateTime endDate, Float latitude, Float longitude, Set<Tag> categories, Player admin) {
         this.name = name;
         this.description = description;
         this.capacity = capacity;
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.thumbnail = thumbnail;
         this.categories = categories;
         this.admin = admin;
         this.admin.createEvent(this);
@@ -66,32 +69,109 @@ public class Event {
 
 
     public Either<RuntimeException, Boolean> addParticipant(Player player) {
-        if (participants.size() < capacity) {
-            participants.add(player);
-            var either = player.joinEvent(this);
-            if (either.isRight()) {
-                return Either.right(true);
-            }
+        Assert.state(!admin.equals(player), "You cannot add yourself as a participant");
 
-            return Either.left(either.getLeft());
+        if (capacityReached()) {
+            return Either.left(new RuntimeException("Event is full"));
         }
 
-        return Either.left(new RuntimeException("Event is full"));
+        participants.add(player);
+        return Either.right(true);
     }
 
     public boolean capacityReached() {
         return participants.size() == capacity;
     }
 
-    public List<Player> getParticipants() {
-        return List.copyOf(participants);
+    public boolean isOwner(Player player) {
+        return admin.isSameOf(player);
     }
 
-    public void close(Player player) {
-        if (player.equals(admin)) {
-            active = false;
-            participants.clear();
-            admin = null;
-        }
+    public boolean notParticipant(Player player) {
+        return !participants.contains(player);
+    }
+
+    public boolean requestAlreadySent(Player player) {
+        return requests.stream().anyMatch(request -> request.isFrom(player));
+    }
+
+    public boolean overlapsWith(Event event) {
+        // player cannot send interest to an event that starts at least 1 hour before or after the event
+        return startDate.isBefore(event.endDate.minusHours(1)) && endDate.isAfter(event.startDate.plusHours(1));
+    }
+
+
+    public boolean hasJoinRequestFrom(Player player) {
+        return requests.stream().anyMatch(request -> request.isFrom(player));
+    }
+
+    public void acceptJoinRequest(Player joiningParticipant) {
+        Assert.state(hasJoinRequestFrom(joiningParticipant), "Player must have a join request");
+        requests.stream()
+                .filter(joinRequest -> joinRequest.isFrom(joiningParticipant))
+                .findFirst()
+                .ifPresent(JoinRequest::accept);
+    }
+
+    public void rejectJoinRequest(Player joiningPlayer) {
+        Assert.state(hasJoinRequestFrom(joiningPlayer), "Player must have a join request");
+        requests.stream()
+                .filter(joinRequest -> joinRequest.isFrom(joiningPlayer))
+                .findFirst()
+                .ifPresent(JoinRequest::reject);
+    }
+
+    public String getAdminName() {
+        return admin.getName();
+    }
+
+    public String getAdminAvatar() {
+        return admin.getAvatar();
+    }
+
+    public String[] getCategoriesNames() {
+        return categories.stream().map(Tag::getName).toArray(String[]::new);
+    }
+
+    public int getAmountOfParticipants() {
+        return participants.size();
+    }
+
+    public String getFormattedDate() {
+        return startDate.getDayOfMonth() + "/" + startDate.getMonthValue() + "/" + startDate.getYear();
+    }
+
+    public String getFormattedStartTime() {
+        return startDate.getHour() + ":" + startDate.getMinute();
+    }
+
+    public String getFormattedEndTime() {
+        return endDate.getHour() + ":" + endDate.getMinute();
+    }
+
+    public Set<Tag> distinctTagsFrom(Player player) {
+        return categories.stream()
+                .filter(player::notInterestedIn)
+                .collect(Collectors.toSet());
+    }
+
+    public Collection<Tag> getCategories() {
+        return Collections.unmodifiableCollection(categories);
+    }
+
+    public void newJoinRequest(JoinRequest joinRequest) {
+        requests.add(joinRequest);
+    }
+
+    public boolean isParticipant(Player player) {
+        return participants.contains(player);
+    }
+
+    public boolean hasPendingOrAcceptedJoinRequestFrom(Player player) {
+        return requests.stream().anyMatch(request -> request.isPendingAndFrom(player) || request.isAcceptedAndFrom(player));
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 }

@@ -1,11 +1,9 @@
 spring:
-  config:
-    import: file:.env.test[.properties]
   datasource:
     driver-class-name: org.h2.Driver
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    url: jdbc:h2:mem:hobbie-test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
   jpa:
     show-sql: true
     hibernate:
@@ -13,3 +11,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  flyway:
+    enabled: false

@@ -1,7 +1,11 @@
 package com.br.hobbie.modules.player.domain.entities;
 
+import com.br.hobbie.modules.event.application.HaversineDistanceCalculator;
 import com.br.hobbie.modules.event.domain.entities.Event;
+import com.br.hobbie.modules.event.domain.entities.JoinRequest;
 import com.br.hobbie.shared.core.errors.Either;
+import com.br.hobbie.shared.factory.PlayerEventTestFactory;
+import com.br.hobbie.shared.utils.PlayerEventTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,18 +13,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.lang.reflect.InvocationTargetException;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 @ExtendWith(MockitoExtension.class)
 class PlayerTest {
-    static final LocalDate DATE = LocalDate.of(1999, 1, 1);
-    static final LocalTime START_TIME = LocalTime.of(10, 0);
-    static final LocalTime END_TIME = LocalTime.of(12, 0);
-    static final BigDecimal LATITUDE = BigDecimal.ONE;
-    static final BigDecimal LONGITUDE = BigDecimal.TEN;
+    static final ZonedDateTime START_DATE = ZonedDateTime.now();
+    static final ZonedDateTime END_DATE = ZonedDateTime.now().plusDays(1);
+    static final Float LATITUDE = 10F;
+    static final Float LONGITUDE = 10F;
 
     static final int CAPACITY = 10;
 
@@ -29,11 +31,11 @@ class PlayerTest {
     private Player player;
     private Event event;
 
+
     @BeforeEach
     void setUp() {
-        player = new Player("name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
-
-        event = new Event("name", "description", CAPACITY, DATE, START_TIME, END_TIME, LATITUDE, LONGITUDE, "thumbnail", TAGS, player);
+        player = PlayerEventTestFactory.createPlayer();
+        event = new Event("name", "description", CAPACITY, START_DATE, END_DATE, LATITUDE, LONGITUDE, TAGS, player);
     }
 
     @Test
@@ -46,56 +48,7 @@ class PlayerTest {
         player.addInterest(tag);
 
         // THEN
-        Assertions.assertEquals(1, player.getInterests().size());
-        Assertions.assertEquals(tag, player.getInterests().iterator().next());
-    }
-
-    @Test
-    @DisplayName("Should not add interest to player when already exists")
-    void addInterest_WhenAlreadyExists() {
-        // GIVEN
-        Tag tag = new Tag("tag");
-        player.addInterest(tag);
-
-        // WHEN
-        player.addInterest(tag);
-
-        // THEN
-        Assertions.assertEquals(1, player.getInterests().size());
-        Assertions.assertEquals(tag, player.getInterests().iterator().next());
-    }
-
-    @Test
-    @DisplayName("Should be able to add multiple interests to player")
-    void addInterests_WhenSuccessFull() {
-        // GIVEN
-        Tag tag1 = new Tag("tag1");
-        Tag tag2 = new Tag("tag2");
-
-        // WHEN
-        player.addInterests(tag1, tag2);
-
-        // THEN
-        Assertions.assertEquals(2, player.getInterests().size());
-        Assertions.assertTrue(player.getInterests().contains(tag1));
-        Assertions.assertTrue(player.getInterests().contains(tag2));
-    }
-
-    @Test
-    @DisplayName("Should not add multiple interests to player when already exists")
-    void addInterests_WhenAlreadyExists() {
-        // GIVEN
-        Tag tag1 = new Tag("tag1");
-        Tag tag2 = new Tag("tag2");
-        player.addInterests(tag1, tag2);
-
-        // WHEN
-        player.addInterests(tag1, tag2);
-
-        // THEN
-        Assertions.assertEquals(2, player.getInterests().size());
-        Assertions.assertTrue(player.getInterests().contains(tag1));
-        Assertions.assertTrue(player.getInterests().contains(tag2));
+        Assertions.assertTrue(player.hasInterestIn(tag));
     }
 
     @Test
@@ -107,108 +60,199 @@ class PlayerTest {
         player.createEvent(event);
 
         // THEN
-        Assertions.assertEquals(1, player.getParticipantEvents().size());
-        Assertions.assertTrue(player.getParticipantEvents().contains(event));
+        Assertions.assertTrue(event.isOwner(player));
+        Assertions.assertTrue(player.isParticipant(event));
     }
 
     @Test
-    @DisplayName("Should close an event if it is active")
-    void closeEvent_WhenActive() {
-        // GIVEN - setUp
-
-        // WHEN
-        Either<RuntimeException, Boolean> result = player.closeEvent();
-
-        // THEN
-        Assertions.assertTrue(result.isRight());
-        Assertions.assertFalse(event.isActive());
-        Assertions.assertEquals(0, player.getParticipantEvents().size());
-    }
-
-    @Test
-    @DisplayName("Should not close event if user has no event")
-    void closeEvent_WhenNotActive() {
+    @DisplayName("Should return true if the players have same id")
+    void should_ReturnTrue_WhenPlayersHaveSameId() {
         // GIVEN
-        Player other = new Player("other name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
-
+        var player1 = PlayerEventTestFactory.createPlayer();
+        var player2 = PlayerEventTestFactory.createPlayer();
 
         // WHEN
-        Either<RuntimeException, Boolean> result = other.closeEvent();
-
+        boolean result = player1.isSameOf(player2);
 
         // THEN
-        Assertions.assertTrue(result.isLeft());
-        Assertions.assertNull(other.getAdminEvent());
+        Assertions.assertTrue(result);
     }
 
     @Test
-    @DisplayName("Should quit an event when player is not admin")
-    void quitEvent_WhenNotAdmin() {
+    @DisplayName("Should return false if the players have different id")
+    void should_ReturnFalse_WhenPlayersHaveDifferentId() {
         // GIVEN
-        Player other = new Player("other name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
-        player.createEvent(event);
-        event.addParticipant(other);
+        var player1 = PlayerEventTestFactory.createPlayer();
+        var player2 = PlayerEventTestFactory.createParticipant();
+
 
         // WHEN
-        Either<RuntimeException, Boolean> result = other.quitEvent(event);
+        boolean result = player1.isSameOf(player2);
 
         // THEN
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("Should send an interest request for some event if the player is not the admin")
+    void sendInterestRequest_WhenSuccessFull() {
+        // GIVEN
+        Player participant = PlayerEventTestFactory.createParticipant();
+
+        // WHEN
+        Either<IllegalStateException, JoinRequest> result = participant.sendInterest(event);
+
+        // THEN
+        Assertions.assertTrue(result.isRight());
+        Assertions.assertTrue(event.hasJoinRequestFrom(participant));
+    }
+
+    @Test
+    @DisplayName("Cannot send a join request with an event that overlaps with another event")
+    void cannotSend_JoinRequest_WithOverlappingEvents() {
+        // GIVEN
+        Player participant = PlayerEventTestFactory.createParticipant();
+        PlayerEventTestFactory.createStartedEvent(participant);
+        Event overlappingEvent = PlayerEventTestFactory.createStartedEvent(player);
+
+        // WHEN
+        Either<IllegalStateException, JoinRequest> result = participant.sendInterest(overlappingEvent);
+
+        // THEN
+        Assertions.assertTrue(result.isLeft());
+        Assertions.assertEquals("Player already has an event at this time", result.getLeft().getMessage());
+    }
+
+    @Test
+    @DisplayName("Should accept a join request of some another player")
+    void should_AcceptJoinRequest_OfSomeAnotherPlayer() {
+        // GIVEN
+        Player participant = PlayerEventTestFactory.createParticipant();
+        participant.sendInterest(event);
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = player.acceptJoinRequest(participant, event);
+
+        // THEN
+        Assertions.assertTrue(result.isRight());
+        Assertions.assertEquals(2, event.getAmountOfParticipants());
+    }
+
+    @Test
+    @DisplayName("Should returns an error when tries to accept a request from a player that has not sent a request")
+    void should_ReturnsAnError_WhenTriesToAcceptARequestFromAPlayerThatHasNotSentARequest() {
+        // GIVEN
+        Player participant = PlayerEventTestFactory.createParticipant();
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = player.acceptJoinRequest(participant, event);
+
+        // THEN
+        Assertions.assertTrue(result.isLeft());
+        Assertions.assertEquals("Player must have a join request", result.getLeft().getMessage());
+    }
+
+    @Test
+    @DisplayName("Should returns an error when tries to accept a request when the player is not the admin of the event")
+    void should_ReturnsAnError_WhenTriesToAcceptARequestWhenThePlayerIsNotTheAdminOfTheEvent() {
+        // GIVEN
+        Player participant = PlayerEventTestFactory.createParticipant();
+        participant.sendInterest(event);
+
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = participant.acceptJoinRequest(participant, event);
+
+        // THEN
+        Assertions.assertTrue(result.isLeft());
+        Assertions.assertEquals("Player must be the admin of the event", result.getLeft().getMessage());
+    }
+
+    @Test
+    @DisplayName("Should returns an error when tries to reject a request when the player is not the admin of the event")
+    void should_ReturnsAnError_WhenTriesToRejectARequestWhenThePlayerIsNotTheAdminOfTheEvent() {
+        // GIVEN
+        Player participant = PlayerEventTestFactory.createParticipant();
+        participant.sendInterest(event);
+
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = participant.rejectJoinRequest(participant, event);
+
+        // THEN
+        Assertions.assertTrue(result.isLeft());
+        Assertions.assertEquals("Player must be the admin of the event", result.getLeft().getMessage());
+    }
+
+    @Test
+    @DisplayName("Should reject a join request of some another player")
+    void should_RejectJoinRequest_OfSomeAnotherPlayer() {
+        // GIVEN
+        Player participant = PlayerEventTestFactory.createParticipant();
+        participant.sendInterest(event);
+
+        // WHEN
+        Either<RuntimeException, Boolean> result = player.rejectJoinRequest(participant, event);
+        Set<JoinRequest> requests = PlayerEventTestUtils.extractSomeField(Event.class, "requests", event, Set.class);
+
+        // THEN
+        Assertions.assertEquals(1, event.getAmountOfParticipants());
+        Assertions.assertTrue(requests.stream().anyMatch(request -> request.isFrom(participant)));
+        Assertions.assertTrue(requests.stream().anyMatch(JoinRequest::isRejected));
         Assertions.assertTrue(result.isRight());
     }
 
     @Test
-    @DisplayName("Should not quit an event when player is admin")
-    void quitEvent_ReturnsEitherErrorWhenAdmin() {
-        // GIVEN - setUp
-        player.createEvent(event);
+    @DisplayName("Should do nothing when tries to reject a request from a player that has not sent a request")
+    void should_DoNothing_WhenTriesToRejectARequestFromAPlayerThatHasNotSentARequest() {
+        // GIVEN
+        Player participant = PlayerEventTestFactory.createParticipant();
 
         // WHEN
-        Either<RuntimeException, Boolean> result = player.quitEvent(event);
+        player.rejectJoinRequest(participant, event);
+        var requests = PlayerEventTestUtils.extractSomeField(Event.class, "requests", event, Set.class);
 
         // THEN
-        Assertions.assertTrue(result.isLeft());
+        Assertions.assertEquals(1, event.getAmountOfParticipants());
+        Assertions.assertTrue(requests.isEmpty());
     }
 
     @Test
-    @DisplayName("Should not quit an event when player is not a participant")
-    void quitEvent_ReturnsEitherErrorWhenNotParticipant() {
-        // GIVEN - setUp
-        Player other = new Player("other name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
-        player.createEvent(event);
+    @DisplayName("Should return true when the event distance is within the player radius")
+    void should_ReturnTrue_WhenEventDistanceIsWithinPlayerRadius() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        // GIVEN
+        var participant = PlayerEventTestFactory.createParticipant();
+        var event = PlayerEventTestFactory.createEvent();
+        var participantLatitude = participant.getMatchLatitude();
+        var participantLongitude = participant.getMatchLongitude();
+        var eventLatitude = event.getLatitude();
+        var eventLongitude = event.getLongitude();
+        var distance = new HaversineDistanceCalculator().getDistance(participantLatitude, participantLongitude, eventLatitude, eventLongitude);
 
         // WHEN
-        Either<RuntimeException, Boolean> result = other.quitEvent(event);
+        var result = participant.distanceIsWithinRadius(distance);
+
 
         // THEN
-        Assertions.assertTrue(result.isLeft());
+        Assertions.assertTrue(result);
     }
 
     @Test
-    @DisplayName("Should be able to join an event if allow new participants, if is active and if is not admin")
-    void joinEvent_WhenSuccessFull() {
-        // GIVEN - setUp
-        Player other = new Player("other name", "avatar", BigDecimal.ONE, BigDecimal.TEN, LocalDate.of(1999, 1, 1));
-        player.createEvent(event);
-
-
-        // WHEN
-        Either<RuntimeException, Boolean> result = other.joinEvent(event);
-
-        // THEN
-        Assertions.assertTrue(result.isRight());
-    }
-
-
-    @Test
-    @DisplayName("Should not be able to join an event if is admin")
-    void joinEvent_ReturnsEitherErrorWhenAdmin() {
-        // GIVEN - setUp
-        player.createEvent(event);
+    @DisplayName("Should return false when the event distance is not within the player radius")
+    void should_ReturnFalse_WhenEventDistanceIsNotWithinPlayerRadius() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        // GIVEN
+        var participant = PlayerEventTestFactory.createParticipant();
+        var participantLatitude = participant.getMatchLatitude();
+        var participantLongitude = participant.getMatchLongitude();
+        var eventLatitude = event.getLatitude();
+        var eventLongitude = event.getLongitude();
+        var distance = new HaversineDistanceCalculator().getDistance(participantLatitude, participantLongitude, eventLatitude, eventLongitude);
 
         // WHEN
-        Either<RuntimeException, Boolean> result = player.joinEvent(event);
+        var result = participant.distanceIsWithinRadius(distance);
 
         // THEN
-        Assertions.assertTrue(result.isLeft());
+        Assertions.assertFalse(result);
+        Assertions.assertTrue(distance > participant.getRadius().doubleValue());
     }
 }

@@ -31,6 +31,7 @@ import java.util.Objects;
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Getter
     private Long id;
     @Getter
     private String name;
@@ -59,4 +60,7 @@ public class Tag {
         return Objects.hash(id, name);
     }
 
+    public boolean isSameOf(Tag tag) {
+        return name.equalsIgnoreCase(tag.name);
+    }
 }
