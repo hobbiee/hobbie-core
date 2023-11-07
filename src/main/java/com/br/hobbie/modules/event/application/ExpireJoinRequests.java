@@ -1,5 +1,6 @@
 package com.br.hobbie.modules.event.application;
 
+import com.br.hobbie.modules.event.domain.entities.RequestStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
@@ -30,10 +31,21 @@ public class ExpireJoinRequests implements RequestExpiration {
      *     </li>
      * </ul>
      */
+    @Override
     @Transactional
     // execute a schedule task to run every 30 minutes to expire join requests
     @Scheduled(cron = "0 0/30 * * * *", zone = "America/Sao_Paulo")
     public void execute() {
+        final boolean existsAnyPendingJoinRequest = manager.createQuery("""
+                        SELECT COUNT(j)
+                        FROM JoinRequest j
+                        WHERE j.status = :status
+                        """, Long.class)
+                .setParameter("status", RequestStatus.PENDING)
+                .getSingleResult() > 0;
+
+        if (!existsAnyPendingJoinRequest) return;
+
         var nowWithTimezone = ZonedDateTime.now();
         final var query = """
                 UPDATE join_request j
