@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component
-@Profile({"prod, dev"})
+@Profile(value = {"prod", "dev"})
 @RequiredArgsConstructor
 @Slf4j
 public class AmazonS3FileUploader implements FileUploader {
