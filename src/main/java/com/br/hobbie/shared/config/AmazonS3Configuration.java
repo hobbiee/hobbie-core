@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @Slf4j
-@Profile({"prod", "dev"})
+@Profile(value = {"prod", "dev"})
 public class AmazonS3Configuration {
 
     @Value("${amazon.s3.bucket-name}")
