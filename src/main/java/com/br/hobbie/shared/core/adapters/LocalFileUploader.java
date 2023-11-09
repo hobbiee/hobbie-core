@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
-@Profile(value = {"dev", "test", "default"})
+@Profile(value = {"test", "default"})
 @Slf4j
 public class LocalFileUploader implements FileUploader {
     @Override
