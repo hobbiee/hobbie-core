@@ -13,7 +13,6 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
-          POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -30,7 +29,7 @@ jobs:
 
       - name: Run tests
         env:
-          DATABASE_URL: jdbc:postgresql://localhost:5432/postgres
+          DATABASE_URL: jdbc:postgresql://posgresqldb:5432/postgres
           DATABASE_USERNAME: postgres
           DATABASE_PASSWORD: postgres
         run: mvn -B clean test
