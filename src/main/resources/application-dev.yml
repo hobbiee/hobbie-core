@@ -6,6 +6,8 @@ spring:
     password: ${DATABASE_PASSWORD}
   jpa:
     show-sql: true
+    hibernate:
+      ddl-auto: none
   flyway:
     enabled: true
 amazon:
@@ -14,3 +16,6 @@ amazon:
     secret-key: ${AMAZON_S3_SECRET_KEY}
     bucket-name: ${AMAZON_S3_BUCKET_NAME}
     region: ${AMAZON_S3_REGION}
+logging:
+  level:
+    root: debug
