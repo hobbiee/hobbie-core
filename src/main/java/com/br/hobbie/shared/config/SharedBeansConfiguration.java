@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 public class SharedBeansConfiguration {
 
     @Bean
-    @Profile({"default", "dev"})
+    @Profile({"prod", "dev"})
     public Flyway flyway(DataSource dataSource) {
         var flyway = Flyway.configure()
                 .dataSource(dataSource)
