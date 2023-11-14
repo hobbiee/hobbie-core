@@ -2,7 +2,7 @@ spring:
   profiles:
     active: default
   flyway:
-    enabled: false # Disable Flyway for now. I'm going to enable only in production and dev (staging) profile
+    enabled: false
   config:
     import: optional:classpath:.env.properties
   datasource:
@@ -17,3 +17,5 @@ spring:
     properties:
       hibernate:
         format_sql: true
+server:
+  port: 8081
