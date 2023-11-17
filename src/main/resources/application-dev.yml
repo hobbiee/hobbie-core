@@ -8,6 +8,15 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+  h2:
+    console:
+      enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:8080/auth/realms/hobbie-realm"
+          jwk-set-uri: "http://localhost:8080/auth/realms/hobbie-realm/protocol/openid-connect/certs"
 amazon:
   s3:
     access-key: ${AMAZON_S3_ACCESS_KEY}

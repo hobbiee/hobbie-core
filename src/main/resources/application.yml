@@ -2,7 +2,7 @@ spring:
   profiles:
     active: default
   flyway:
-    enabled: false
+    enabled: false # Disable Flyway for now. I'm going to enable only in production and dev (staging) profile
   config:
     import: optional:classpath:.env.properties
   datasource:
@@ -17,5 +17,27 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  h2:
+    console:
+      enabled: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: ${GOOGLE_OAUTH2_SCOPE}
+        
+#      resourceserver:
+#        jwt:
+#          issuer-uri: "http://localhost:8080/auth/realms/hobbie-realm"
+#          jwk-set-uri: "http://localhost:8080/auth/realms/hobbie-realm/protocol/openid-connect/certs"
 server:
   port: 8081
+
+hobbie-addons:
+  issuers:
+    - uri: "https://accounts.google.com"
+    - uri: "http://localhost:8080/realms/hobbie-realm"
