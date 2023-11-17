@@ -1,6 +1,7 @@
 package com.br.hobbie.shared.config;
 
 import org.flywaydb.core.Flyway;
+import org.keycloak.admin.client.Keycloak;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -20,5 +21,15 @@ public class SharedBeansConfiguration {
         flyway.repair();
         flyway.migrate();
         return flyway;
+    }
+
+    @Bean
+    public Keycloak keycloak() {
+        return Keycloak.getInstance(
+                "http://localhost:8080/",
+                "hobbie-realm",
+                "admin",
+                "admin",
+                "hobbie-server");
     }
 }
