@@ -29,14 +29,9 @@ spring:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: ${GOOGLE_OAUTH2_SCOPE}
-        
-#      resourceserver:
-#        jwt:
-#          issuer-uri: "http://localhost:8080/auth/realms/hobbie-realm"
-#          jwk-set-uri: "http://localhost:8080/auth/realms/hobbie-realm/protocol/openid-connect/certs"
 server:
   port: 8081
-
+  
 hobbie-addons:
   issuers:
     - uri: "https://accounts.google.com"
