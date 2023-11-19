@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,8 @@ import java.util.List;
 public class CreateUser {
 
     private final Keycloak keycloak;
+    @Value("${hobbie.authentication.keycloak.realm}")
+    private String realm;
 
     private static UserRepresentation getUserRepresentation(CreateUserRequest request) {
         var userRepresentation = new UserRepresentation();
@@ -39,7 +42,7 @@ public class CreateUser {
     @PostMapping("/users")
     public ResponseEntity<?> handle(@Valid @RequestBody CreateUserRequest request) {
         var userRepresentation = getUserRepresentation(request);
-        var response = keycloak.realm("hobbie-realm").users().create(userRepresentation);
+        var response = keycloak.realm(realm).users().create(userRepresentation);
 
         if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
             return ResponseEntity.created(response.getLocation()).build();
