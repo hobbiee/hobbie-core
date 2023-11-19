@@ -35,10 +35,11 @@ server:
 hobbie-addons:
   issuers:
     - uri: "https://accounts.google.com"
-    - uri: "http://localhost:8080/realms/hobbie-realm"
+    - uri: ${KEYCLOAK_URI}
 hobbie:
   authentication:
     keycloak:
-      auth-url: "http://localhost:8080/realms/hobbie-realm/protocol/openid-connect/token"
-      client-id: "hobbie-server"
-      grant-type: "password"
+      uri-scheme: ${KEYCLOAK_URI}
+      client-id: ${KEYCLOAK_CLIENT_ID}
+      realm: ${KEYCLOAK_REALM}
+      secret: ${KEYCLOAK_SECRET}

@@ -89,6 +89,12 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>22.0.5</version>
+        </dependency>
+
 
         <!-- Swagger Dependency -->
         <dependency>
