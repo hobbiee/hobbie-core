@@ -1,8 +1,10 @@
 package com.br.hobbie.modules.authentication.http.dtos.request;
 
+import com.br.hobbie.modules.authentication.domain.entities.User;
+import com.br.hobbie.shared.core.validators.UniqueValue;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 import org.keycloak.representations.idm.CredentialRepresentation;
 
 import java.util.List;
@@ -13,9 +15,10 @@ public record CreateUserRequest(
         String lastName,
         @NotBlank(message = "email is required")
         @Email(message = "email must be valid")
+        @UniqueValue(domainClass = User.class, fieldName = "email", message = "email already in use")
         String email,
         @NotBlank(message = "password is required")
-        @Min(value = 6, message = "password must be at least 6 characters long")
+        @Length(min = 8, message = "password must be at least 8 characters long")
         String password
 
 ) {
