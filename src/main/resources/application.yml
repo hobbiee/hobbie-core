@@ -31,8 +31,14 @@ spring:
             scope: ${GOOGLE_OAUTH2_SCOPE}
 server:
   port: 8081
-  
+
 hobbie-addons:
   issuers:
     - uri: "https://accounts.google.com"
     - uri: "http://localhost:8080/realms/hobbie-realm"
+hobbie:
+  authentication:
+    keycloak:
+      auth-url: "http://localhost:8080/realms/hobbie-realm/protocol/openid-connect/token"
+      client-id: "hobbie-server"
+      grant-type: "password"
