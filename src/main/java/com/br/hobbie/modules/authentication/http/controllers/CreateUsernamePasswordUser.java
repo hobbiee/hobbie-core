@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/api/auth")
 @RequiredArgsConstructor
-public class CreateUser {
+public class CreateUsernamePasswordUser {
 
     private final Keycloak keycloak;
     @Value("${hobbie.authentication.keycloak.realm}")
