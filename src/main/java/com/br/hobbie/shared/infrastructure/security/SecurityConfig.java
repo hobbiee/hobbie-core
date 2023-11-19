@@ -4,6 +4,7 @@ import com.br.hobbie.shared.config.HobbieAuthenticationProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -37,7 +38,7 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**").permitAll()
                 .requestMatchers("/swagger-ui.html").permitAll()
                 .requestMatchers("/v3/api-docs/**").permitAll()
-                .requestMatchers("/v1/api/auth/username-password").permitAll()
+                .requestMatchers(HttpMethod.POST, "/v1/api/auth/username-password", "v1/api/auth/users").permitAll()
                 .anyRequest().authenticated()
         );
 

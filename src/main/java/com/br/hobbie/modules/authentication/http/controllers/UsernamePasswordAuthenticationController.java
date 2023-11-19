@@ -3,8 +3,11 @@ package com.br.hobbie.modules.authentication.http.controllers;
 import com.br.hobbie.modules.authentication.http.dtos.request.AuthenticationRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.OAuth2Constants;
+import org.keycloak.admin.client.Keycloak;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -18,32 +21,30 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("/v1/api/auth")
 @RequiredArgsConstructor
 public class UsernamePasswordAuthenticationController {
-    @Value("${hobbie.authentication.keycloak.auth-url}")
-    private String authUrl;
-
+    private final Keycloak keycloak;
+    @Value("${hobbie.authentication.keycloak.uri-scheme}")
+    private String keycloakUriScheme;
     @Value("${hobbie.authentication.keycloak.client-id}")
     private String clientId;
 
-    @Value("${hobbie.authentication.keycloak.grant-type}")
-    private String grantType;
-
     @PostMapping("/username-password")
-    public ResponseEntity<String> handle(@Valid @RequestBody AuthenticationRequest request) {
+    public ResponseEntity<?> handle(@Valid @RequestBody AuthenticationRequest request) {
+        final String URL = keycloakUriScheme + "/protocol/openid-connect/token";
         new HttpHeaders().setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         var authRequest = new LinkedMultiValueMap<String, String>();
         authRequest.add("client_id", clientId);
         authRequest.add("username", request.email());
         authRequest.add("password", request.password());
-        authRequest.add("grant_type", grantType);
+        authRequest.add("grant_type", OAuth2Constants.PASSWORD);
 
         var httpClient = new RestTemplate();
-        var response = httpClient.postForEntity(authUrl, authRequest, String.class);
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return ResponseEntity.ok(response.getBody());
+        try {
+            var response = httpClient.postForEntity(URL, authRequest, String.class);
+            return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
     }
 
 }
