@@ -2,6 +2,9 @@ package com.br.hobbie.modules.authentication.http.controllers;
 
 import com.br.hobbie.modules.authentication.domain.entities.AuthenticationActions;
 import com.br.hobbie.modules.authentication.http.dtos.request.CreateUserRequest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CreateUsernamePasswordUser {
 
+    @PersistenceContext
+    private final EntityManager manager;
     private final Keycloak keycloak;
     @Value("${hobbie.authentication.keycloak.realm}")
     private String realm;
@@ -40,11 +45,14 @@ public class CreateUsernamePasswordUser {
     }
 
     @PostMapping("/users")
+    @Transactional
     public ResponseEntity<?> handle(@Valid @RequestBody CreateUserRequest request) {
         var userRepresentation = getUserRepresentation(request);
+        var userEntity = request.toModel();
         var response = keycloak.realm(realm).users().create(userRepresentation);
 
         if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
+            manager.persist(userEntity);
             return ResponseEntity.created(response.getLocation()).build();
         }
 

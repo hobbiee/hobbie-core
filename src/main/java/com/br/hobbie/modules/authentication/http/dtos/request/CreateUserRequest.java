@@ -29,4 +29,8 @@ public record CreateUserRequest(
         credential.setTemporary(false);
         return List.of(credential);
     }
+
+    public User toModel() {
+        return new User(firstName + " " + lastName, email);
+    }
 }
