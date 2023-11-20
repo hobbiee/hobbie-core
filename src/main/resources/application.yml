@@ -41,5 +41,7 @@ hobbie:
     keycloak:
       uri-scheme: ${KEYCLOAK_URI}
       client-id: ${KEYCLOAK_CLIENT_ID}
+      auth-client-id: ${KEYCLOAK_AUTH_CLIENT_ID}
       realm: ${KEYCLOAK_REALM}
       secret: ${KEYCLOAK_SECRET}
+      server-url: ${KEYCLOAK_SERVER_URL}
