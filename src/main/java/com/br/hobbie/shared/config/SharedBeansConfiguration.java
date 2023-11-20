@@ -20,6 +20,8 @@ public class SharedBeansConfiguration {
     private String clientId;
     @Value("${hobbie.authentication.keycloak.realm}")
     private String realm;
+    @Value("${hobbie.authentication.keycloak.server-url}")
+    private String serverUrl;
 
     @Bean
     @Profile({"prod", "dev"})
@@ -36,7 +38,7 @@ public class SharedBeansConfiguration {
     @Bean
     public Keycloak keycloak() {
         return KeycloakBuilder.builder()
-                .serverUrl("http://localhost:8080/")
+                .serverUrl(serverUrl)
                 .realm(realm)
                 .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                 .clientId(clientId)

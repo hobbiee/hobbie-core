@@ -3,6 +3,7 @@ package com.br.hobbie.modules.authentication.http.controllers;
 import com.br.hobbie.modules.authentication.http.dtos.request.AuthenticationRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,16 +21,18 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping("/v1/api/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class UsernamePasswordAuthenticationController {
     private final Keycloak keycloak;
     @Value("${hobbie.authentication.keycloak.uri-scheme}")
     private String keycloakUriScheme;
-    @Value("${hobbie.authentication.keycloak.client-id}")
+    @Value("${hobbie.authentication.keycloak.auth-client-id}")
     private String clientId;
 
     @PostMapping("/username-password")
     public ResponseEntity<?> handle(@Valid @RequestBody AuthenticationRequest request) {
         final String URL = keycloakUriScheme + "/protocol/openid-connect/token";
+        log.info("URL: {}", URL);
         new HttpHeaders().setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         var authRequest = new LinkedMultiValueMap<String, String>();
         authRequest.add("client_id", clientId);
