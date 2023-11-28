@@ -33,8 +33,6 @@ public final class Either<L, R> {
      * <p>
      * That could be an error message or an exception for example
      * </p>
-     *
-     * @return <p>The left value of Either</p>
      */
     private final L left;
     /**
@@ -44,8 +42,6 @@ public final class Either<L, R> {
      * <p>
      * That could be the result of a method for example
      * </p>
-     *
-     * @return <p>The right value of Either</p>
      */
     private final R right;
 
