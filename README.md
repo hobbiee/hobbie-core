@@ -14,13 +14,23 @@ Welcome to Hobbie, your go-to app for discovering and participating in sports ev
 
 ## Environment Variables
 
-To run this project, you will need to add the following environment variables to your .env file
+To run this project locally, you will need to navigate to: `./src/main/resources` and create a file named to .env.properties and place the following keys. Assign each with the values that make sense to you then you should be good to go
 
-`DATABASE_URL`
-
-`DATABASE_PASSWORD`
-
-`DATABASE_USERNAME`
+```bash
+DATABASE_URL=
+DATABASE_USERNAME=
+DATABASE_PASSWORD=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_ISSUER_URI=
+GOOGLE_OAUTH2_SCOPE=
+KEYCLOAK_REALM=
+KEYCLOAK_SECRET=
+KEYCLOAK_CLIENT_ID=
+KEYCLOAK_AUTH_CLIENT_ID=
+KEYCLOAK_URI=
+KEYCLOAK_SERVER_URL=
+```
 
 
 ## Run Locally
@@ -37,14 +47,7 @@ Go to the project directory
   cd hobbie-core
 ```
 
-Create .env file and keys from section above with your local values
-
-```bash
-  DATABASE_URL=jdbc:postgresql://localhost:5432/hobbie
-  DATABASE_PASSWORD=admin
-  DATABASE_USERNAME=postgres
-```
-
+Follow the step above about environment variables to start a `.env.properties`
 
 ## API Reference
 
