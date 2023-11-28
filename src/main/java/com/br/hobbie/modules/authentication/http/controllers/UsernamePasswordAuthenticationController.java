@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/v1/api/auth")
 @RequiredArgsConstructor
@@ -40,14 +42,19 @@ public class UsernamePasswordAuthenticationController {
         authRequest.add("username", request.email());
         authRequest.add("password", request.password());
         authRequest.add("grant_type", OAuth2Constants.PASSWORD);
-
         var httpClient = new RestTemplate();
 
+        log.info("Request: {}", authRequest);
+
         try {
-            var response = httpClient.postForEntity(URL, authRequest, String.class);
-            return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
+            var response = httpClient.postForEntity(URL, authRequest, KeycloakResponse.class);
+            log.info("Response: {}", response);
+
+            final var body = Objects.requireNonNull(response.getBody());
+            return ResponseEntity.ok(new LoginResponse(body.access_token(), body.refresh_token()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            log.error("Error: {}", e.getMessage());
+            throw new UsernameNotFoundException("Invalid Credentials");
         }
     }
 
