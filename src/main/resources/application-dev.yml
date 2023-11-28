@@ -28,7 +28,7 @@ amazon:
 
 hobbie-addons:
   issuers:
-    - uri: "https://accounts.google.com"
+    - uri: ${GOOGLE_ISSUER_URI}
     - uri: ${KEYCLOAK_URI}
 hobbie:
   authentication:
