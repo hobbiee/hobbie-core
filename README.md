@@ -48,30 +48,145 @@ Create .env file and keys from section above with your local values
 
 ## API Reference
 
-#### Get all items
+We going to always try to do an effort to keep the API Reference on README updated, but if you noticed the README is outdated please take a look on swagger-ui from the Staging environment linked in the project description.
+
+#### Create Username Password User
 
 ```http
-  GET /api/items
+POST /v1/api/auth/users
+Accept 'Application/JSON'
 ```
-
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `api_key` | `string` | **Required**. Your API key |
-
-#### Get item
 
 ```http
-  GET /api/items/${id}
+{
+  "firstName": "string",
+  "lastName": "string",
+  "email": "string",
+  "password": "string"
+}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `id`      | `string` | **Required**. Id of item to fetch |
+#### Username Password Jwt Authenticaiton
 
-#### add(num1, num2)
+```http
+POST /v1/api/auth/username-password
+Accept 'Application/JSON'
+```
 
-Takes two numbers and returns the sum.
+```http
+{
+  "email": "string",
+  "password": "string"
+}
+```
 
+### Create Players
+
+```http
+POST /v1/api/players
+Accept 'Multipart/Form-data'
+```
+
+| Key | Value         | Description |
+| :-------- | :-------| :---------- |
+| `name`  | `string`  | Player's name |
+| `avatar`| `file`    | Player's profile image |
+| `latitude`  | `float`  | Latitude to match events |
+| `longitude`| `float`    | Longitude to match events |
+| `radius`  | `float`  | Radius to match events |
+| `birthDate`| `date`    | Player's birth date |
+| `interests`| `string[]`    | Player's interests to match events |
+
+
+
+#### Create Events
+
+```http
+POST /v1/api/events
+Accept 'Application/JSON'
+```
+
+```http
+{
+  "name": "string",
+  "description": "string",
+  "capacity": 2,
+  "startDate": "2023-11-28T03:56:15.391Z",
+  "endDate": "2023-11-28T03:56:15.391Z",
+  "latitude": 90,
+  "longitude": 180,
+  "categories": [
+    "string"
+  ],
+  "adminId": 0
+}
+```
+
+#### Upload Event Thumbnail
+
+```http
+PATCH /v1/api/events/{id}/thumbnail
+Accept 'Multipart/form-data'
+```
+| Key | Value         | Description |
+| :-------- | :-------| :---------- |
+| `id`  | `integer`  | Event id |
+| `file`| `file`    | Event thumbnail |
+
+#### Send Participation Request
+
+```http
+POST /v1/api/players/interest
+Accept 'Application/JSON'
+```
+
+```http
+{
+  "eventId": 0,
+  "playerId": 0
+}
+```
+
+#### Accept Join Request
+
+```http
+POST /v1/api/players/accept-join-request
+Accept 'Application/JSON'
+```
+
+```http
+{
+  "adminId": 0,
+  "playerToAcceptId": 0,
+  "eventId": 0
+}
+```
+
+#### Accept Join Request
+
+```http
+POST /v1/api/players/reject-join-request
+Accept 'Application/JSON'
+```
+
+```http
+{
+  "adminId": 0,
+  "playerToRejectId": 0,
+  "eventId": 0
+}
+```
+
+
+#### Find Events Matching With Interests
+
+```http
+GET /v1/api/events/{playerId}
+```
+
+| Key         | Value       | Description                     |
+| :--------   | :-------    | :-------------------------------|
+| `playerId`  | `integer`   | Player id to find events for    |
 
 ## Tech Stack
 
