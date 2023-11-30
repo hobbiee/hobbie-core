@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public record EventResponse(
+        Long id,
         String name,
         String description,
         String date,
@@ -37,6 +38,7 @@ public record EventResponse(
     public static EventResponse from(Event event, Player player, DistanceCalculator distanceCalculator) {
         var distance = distanceCalculator.getDistance(player.getMatchLatitude(), player.getMatchLongitude(), event.getLatitude(), event.getLongitude());
         return new EventResponse(
+                event.getId(),
                 event.getName(),
                 event.getDescription(),
                 event.getFormattedDate(),
